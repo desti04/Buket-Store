@@ -2,14 +2,27 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PesananController;
+use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\AuthController;
 
-// Halaman Dashboard Admin
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+Route::prefix('admin')->name('admin.')->group(function () {
 
-// Produk - versi simple
-Route::get('/admin/produk', [ProdukController::class, 'index'])->name('admin.produk');
+    // Halaman Dashboard Admin
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
 
-// Tambah Produk
-Route::post('/admin/produk/tambah', [ProdukController::class, 'store'])->name('admin.produk.tambah');
+    Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
+    Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
+
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
+    Route::post('/kategori/tambah', [KategoriController::class, 'store'])->name('kategori.tambah');
+
+    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
