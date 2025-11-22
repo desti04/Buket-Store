@@ -23,13 +23,17 @@
             position: fixed;
             width: 230px;
         }
-        .sidebar a {
+        .sidebar a, .sidebar button {
             color: #c2c7d0;
             display: block;
             padding: 10px 20px;
             font-size: 15px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: none;
         }
-        .sidebar a:hover {
+        .sidebar a:hover, .sidebar button:hover {
             background: #495057;
             color: white;
         }
@@ -39,6 +43,12 @@
         }
         .navbar-custom {
             margin-left: 230px;
+        }
+        button.logout-btn {
+            background: none;
+            color: inherit;
+            outline: none;
+            border: none;
         }
     </style>
 </head>
@@ -53,7 +63,14 @@
         <a href="/admin/kategori"><i class="fa fa-tags"></i> Kategori</a>
         <a href="/admin/pesanan"><i class="fa fa-shopping-cart"></i> Pesanan</a>
         <a href="/admin/users"><i class="fa fa-users"></i> Pengguna</a>
-        <a href="/admin/logout"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        
+        <!-- FIX LOGOUT (POST FORM) -->
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="logout-btn">
+                <i class="fa fa-sign-out-alt"></i> Logout
+            </button>
+        </form>
     </div>
 
     <!-- NAVBAR -->
