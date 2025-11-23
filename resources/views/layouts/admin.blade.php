@@ -56,7 +56,7 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <h4 class="text-center mb-4">Buket-Store</h4>
+        <h4 class="text-center mb-4">Buket Store</h4>
 
         <a href="/admin"><i class="fa fa-home"></i> Dashboard</a>
         <a href="/admin/produk"><i class="fa fa-gift"></i> Data Produk</a>
