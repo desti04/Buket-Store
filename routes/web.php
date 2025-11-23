@@ -39,8 +39,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
     Route::post('/kategori/tambah', [KategoriController::class, 'store'])->name('kategori.tambah');
 
-    // Pesanan
+   // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+
 
     // Pengguna
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
