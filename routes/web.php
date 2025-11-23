@@ -42,6 +42,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
-    // Pengguna
-    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
+    // Pengguna (CRUD Lengkap)
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+    Route::get('/pengguna/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
+    Route::post('/pengguna/tambah', [PenggunaController::class, 'store'])->name('pengguna.store');
+    Route::get('/pengguna/{id}', [PenggunaController::class, 'show'])->name('pengguna.show');
+    Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
+    Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
+    Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+
 });
