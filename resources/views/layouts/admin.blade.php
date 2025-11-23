@@ -62,7 +62,7 @@
         <a href="/admin/produk"><i class="fa fa-gift"></i> Data Produk</a>
         <a href="/admin/kategori"><i class="fa fa-tags"></i> Kategori</a>
         <a href="/admin/pesanan"><i class="fa fa-shopping-cart"></i> Pesanan</a>
-        <a href="/admin/users"><i class="fa fa-users"></i> Pengguna</a>
+        <a href="{{ route('admin.pengguna.index') }}"><i class="fa fa-users"></i> Pengguna</a>
         
         <!-- FIX LOGOUT (POST FORM) -->
         <form action="{{ route('logout') }}" method="POST">
