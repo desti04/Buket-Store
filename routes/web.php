@@ -14,10 +14,17 @@ Route::get('/', function () {
         : redirect()->route('login');
 });
 
-// AUTH (Guest Only)
+// =============================================================
+// AUTH (Guest Only) - Halaman yang bisa diakses sebelum login
+// =============================================================
 Route::middleware('guest')->group(function () {
+    // 1. LOGIN
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    
+    // 2. REGISTER (Perbaikan: Dipindahkan ke dalam grup 'guest')
+    Route::get('/register', [AuthController::class, 'registerForm'])->name('register'); 
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
 
 // LOGOUT (Auth only)
@@ -25,8 +32,11 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// ADMIN ROUTES
+// =============================================================
+// ADMIN ROUTES (Auth Required) - Halaman yang hanya bisa diakses setelah login
+// =============================================================
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -39,12 +49,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
     Route::post('/kategori/tambah', [KategoriController::class, 'store'])->name('kategori.tambah');
 
-   // Pesanan
+    // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
 
-    // Pengguna
-    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
     // Pengguna (CRUD Lengkap)
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/pengguna/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
