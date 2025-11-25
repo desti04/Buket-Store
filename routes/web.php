@@ -3,40 +3,62 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
-use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\FrontendController;
 
-// Redirect Root
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('admin.dashboard')
-        : redirect()->route('login');
-});
+/*
+|--------------------------------------------------------------------------
+| FRONTEND (USER) - HALAMAN WEBSITE UTAMA
+|--------------------------------------------------------------------------
+|
+| Semua user yang membuka website kamu akan melihat halaman home.
+| Tidak perlu login untuk mengakses halaman ini.
+|
+*/
 
-// =============================================================
-// AUTH (Guest Only) - Halaman yang bisa diakses sebelum login
-// =============================================================
+Route::get('/', [FrontendController::class, 'home'])->name('home');
+
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH (GUEST)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('guest')->group(function () {
-    // 1. LOGIN
+
+    // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    
-    // 2. REGISTER (Perbaikan: Dipindahkan ke dalam grup 'guest')
-    Route::get('/register', [AuthController::class, 'registerForm'])->name('register'); 
+
+    // Register
+    Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
 
-// LOGOUT (Auth only)
+
+// Logout
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// =============================================================
-// ADMIN ROUTES (Auth Required) - Halaman yang hanya bisa diakses setelah login
-// =============================================================
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN (AUTH REQUIRED)
+|--------------------------------------------------------------------------
+|
+| Semua halaman admin: dashboard, produk, kategori, pesanan, pengguna
+| hanya bisa diakses setelah login dan berada di prefix /admin
+|
+*/
+
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    
+
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -52,8 +74,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
-
-    // Pengguna (CRUD Lengkap)
+    // Pengguna CRUD
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/pengguna/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
     Route::post('/pengguna/tambah', [PenggunaController::class, 'store'])->name('pengguna.store');
@@ -61,5 +82,4 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
     Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
-
 });
