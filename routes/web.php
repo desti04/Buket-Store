@@ -68,8 +68,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
 
     // Kategori
-    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
-    Route::post('/kategori/tambah', [KategoriController::class, 'store'])->name('kategori.tambah');
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::get('/kategori/tambah', [KategoriController::class, 'create'])->name('kategori.create');
+    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+    Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 
     // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
