@@ -6,34 +6,29 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
-use App\Http\Controllers\FrontendController;
-
 
 /*
 |--------------------------------------------------------------------------
-| FRONTEND (USER) - HALAMAN WEBSITE UTAMA
+| HOME → selalu tampil login (tidak auto redirect)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [FrontendController::class, 'home'])->name('home');
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('home');
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTH (GUEST)
+| AUTH (LOGIN & REGISTER UNTUK TAMU)
 |--------------------------------------------------------------------------
-|
-| Halaman login & register hanya bisa diakses ketika BELUM login (guest).
-|
 */
 
 Route::middleware('guest')->group(function () {
 
-    // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-    // Register
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
@@ -41,7 +36,7 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| LOGOUT (AUTH REQUIRED)
+| LOGOUT
 |--------------------------------------------------------------------------
 */
 
@@ -50,15 +45,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 
-
 /*
 |--------------------------------------------------------------------------
-| USER DASHBOARD (AUTH REQUIRED)
+| USER DASHBOARD (hanya setelah login)
 |--------------------------------------------------------------------------
-|
-| Dashboard User BUKAN admin.
-| Akan dikunjungi oleh pengguna biasa setelah login.
-|
 */
 
 Route::middleware('auth')->get('/user/dashboard', function () {
@@ -66,29 +56,23 @@ Route::middleware('auth')->get('/user/dashboard', function () {
 })->name('user.dashboard');
 
 
-
 /*
 |--------------------------------------------------------------------------
-| ADMIN DASHBOARD + ADMIN PAGES (AUTH REQUIRED)
+| ADMIN ROUTES (hanya setelah login)
 |--------------------------------------------------------------------------
-|
-| Semua halaman admin berada di prefix /admin
-| dan hanya bisa diakses setelah login.
-|
 */
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard Admin (ROLE ADMIN)
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
-    // Produk
+    // PRODUK
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
 
-    // Kategori
+    // KATEGORI
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
     Route::get('/kategori/tambah', [KategoriController::class, 'create'])->name('kategori.create');
     Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
@@ -96,10 +80,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
     Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 
-    // Pesanan
+    // PESANAN
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
-    // Pengguna CRUD
+    // PENGGUNA
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/pengguna/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
     Route::post('/pengguna/tambah', [PenggunaController::class, 'store'])->name('pengguna.store');
@@ -107,4 +91,5 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
     Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+
 });
