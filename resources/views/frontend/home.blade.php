@@ -101,10 +101,8 @@
 
             <!-- Right section: Buttons (for desktop) -->
             <div class="hidden lg:flex items-center space-x-4 relative">
-              <a href="register.html"
-                  class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Register</a>
-              <a href="register.html"
-                  class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Login</a>
+              <a href="{{ route('login') }}" 
+                  class="px-4 py-2 bg-gradient-to-r from-blue-600 to-green-400 text-white font-bold rounded-lg border-2 border-green-400 hover:from-green-400 hover:to-blue-600 transform hover:scale-105 transition">Login</a>
               <div class="relative group cart-wrapper">
                   <a href="/cart.html" >
                       <img src="assets/images/cart-shopping.svg" alt="Cart" class="h-6 w-6 group-hover:scale-120">
