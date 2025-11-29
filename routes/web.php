@@ -52,7 +52,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 */
 
 Route::middleware('auth')->get('/user/dashboard', function () {
-    return view('user.dashboard');
+    return view('frontend.home');
 })->name('user.dashboard');
 
 
