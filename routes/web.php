@@ -8,24 +8,23 @@ use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\FrontendController;
 
+
 /*
 |--------------------------------------------------------------------------
 | FRONTEND (USER) - HALAMAN WEBSITE UTAMA
 |--------------------------------------------------------------------------
-|
-| Semua user yang membuka website kamu akan melihat halaman home.
-| Tidak perlu login untuk mengakses halaman ini.
-|
 */
 
 Route::get('/', [FrontendController::class, 'home'])->name('home');
-
 
 
 /*
 |--------------------------------------------------------------------------
 | AUTH (GUEST)
 |--------------------------------------------------------------------------
+|
+| Halaman login & register hanya bisa diakses ketika BELUM login (guest).
+|
 */
 
 Route::middleware('guest')->group(function () {
@@ -40,7 +39,12 @@ Route::middleware('guest')->group(function () {
 });
 
 
-// Logout
+/*
+|--------------------------------------------------------------------------
+| LOGOUT (AUTH REQUIRED)
+|--------------------------------------------------------------------------
+*/
+
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
@@ -49,16 +53,33 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN (AUTH REQUIRED)
+| USER DASHBOARD (AUTH REQUIRED)
 |--------------------------------------------------------------------------
 |
-| Semua halaman admin: dashboard, produk, kategori, pesanan, pengguna
-| hanya bisa diakses setelah login dan berada di prefix /admin
+| Dashboard User BUKAN admin.
+| Akan dikunjungi oleh pengguna biasa setelah login.
+|
+*/
+
+Route::middleware('auth')->get('/user/dashboard', function () {
+    return view('user.dashboard');
+})->name('user.dashboard');
+
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN DASHBOARD + ADMIN PAGES (AUTH REQUIRED)
+|--------------------------------------------------------------------------
+|
+| Semua halaman admin berada di prefix /admin
+| dan hanya bisa diakses setelah login.
 |
 */
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
+    // Dashboard Admin (ROLE ADMIN)
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash; // Tambahkan ini untuk enkripsi password
-use App\Models\User; // Tambahkan ini untuk berinteraksi dengan tabel users
+use Illuminate\Support\Facades\Hash; 
+use App\Models\User; 
 
 class AuthController extends Controller
 {
@@ -28,19 +28,24 @@ class AuthController extends Controller
             'password' => 'required|min:3',
         ]);
 
-        // Ambil input
+        // Ambil input email & password
         $credentials = $request->only('email', 'password');
 
         // Coba login
         if (Auth::attempt($credentials)) {
+
             // Regenerasi session untuk keamanan
             $request->session()->regenerate();
 
-            // Arahkan ke dashboard admin
-            return redirect()->route('admin.dashboard');
+            // Cek role user dan redirect sesuai role
+            if (Auth::user()->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            } else {
+                return redirect()->route('user.dashboard');
+            }
         }
 
-        // Jika gagal
+        // Jika gagal login
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ]);
@@ -50,41 +55,36 @@ class AuthController extends Controller
 
     /**
      * Tampilkan form register (GET /register)
-     * Tambahan untuk Register
      */
     public function registerForm()
     {
-        return view('auth.register'); // Memanggil view register.blade.php
+        return view('auth.register');
     }
 
     /**
-     * Proses pendaftaran (POST /register)
-     * Tambahan untuk Register
+     * Proses register (POST /register)
      */
     public function register(Request $request)
     {
-        // 1. Validasi Data Pendaftaran
+        // Validasi pendaftaran
         $request->validate([
             'name' => 'required|string|max:255',
-            // Email harus unik di tabel users
-            'email' => 'required|string|email|max:255|unique:users', 
-            // Password minimal 8 karakter dan harus cocok dengan input password_confirmation
-            'password' => 'required|string|min:8|confirmed', 
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // 2. Membuat User Baru di Database
+        // Membuat user baru (default role: user)
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // WAJIB DIENKRIPSI menggunakan Hash
+            'password' => Hash::make($request->password),
+            'role' => 'user', // tambahkan jika perlu
         ]);
 
-        // 3. Pengarahan ke halaman Login dengan pesan sukses
-        return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan Login menggunakan akun baru Anda.');
+        return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan login.');
     }
 
     // ---------------------------------------------------------------- //
-
 
     /**
      * Logout (POST)
@@ -93,13 +93,9 @@ class AuthController extends Controller
     {
         Auth::logout();
 
-        // invalidate session
         $request->session()->invalidate();
-
-        // regenerate token
         $request->session()->regenerateToken();
 
-        // Di sini saya asumsikan route login Anda bernama 'login'
         return redirect()->route('login'); 
     }
 }
