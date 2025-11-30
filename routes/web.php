@@ -14,8 +14,15 @@ use App\Http\Controllers\PenggunaController;
 */
 
 Route::get('/', function () {
+    // Kalau sudah login → arahkan ke dashboard user
+    if (auth()->check()) {
+        return redirect()->route('user.dashboard');   // atau 'admin.dashboard' kalau mau
+    }
+
+    // Kalau belum login → arahkan ke halaman login
     return redirect()->route('login');
 })->name('home');
+
 
 
 /*

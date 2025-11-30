@@ -25,15 +25,157 @@
 </head>
 
 <body>
-    <!-- Header -->
+        <!-- Header -->
     <header class="bg-gray-dark sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center py-4">
-            <!-- Left section: Logo -->
-            <a href="index.html" class="flex items-center">
-              <div>
-                  <img src="frontend/images/template-white-logo.png" alt="Logo" class="h-14 w-auto mr-4">
-              </div>
+
+            {{-- Kiri: Logo --}}
+            <a href="{{ route('user.dashboard') }}" class="flex items-center">
+                <img src="{{ asset('images/logo-buket-new.png') }}" 
+                    alt="Logo" 
+                    class="h-14 w-14 mr-4 rounded-full border border-gray-200 object-cover">
             </a>
+
+            {{-- Tombol hamburger (mobile) --}}
+            <div class="flex lg:hidden">
+                <button id="hamburger" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Tengah: Menu (desktop) --}}
+            <nav class="hidden lg:flex md:flex-grow justify-center">
+                <ul class="flex justify-center space-x-4 text-white">
+                    <li><a href="{{ route('user.dashboard') }}" class="hover:text-secondary font-semibold">Home</a></li>
+
+                    {{-- Men --}}
+                    <li class="relative group" x-data="{ open: false }">
+                        <a href="shop.html" @mouseover="open = true" @mouseleave="open = false"
+                            class="hover:text-secondary font-semibold flex items-center">
+                            Men
+                            <i :class="open ? 'fas fa-chevron-up ml-1 text-xs' : 'fas fa-chevron-down ml-1 text-xs'"></i>
+                        </a>
+                        <ul x-show="open" @mouseover="open = true" @mouseleave="open = false"
+                            class="absolute left-0 bg-white text-black space-y-2 mt-1 p-2 rounded shadow-lg"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-90"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-90">
+                            <li><a href="shop.html" class="min-w-40 block px-4 py-2 hover:bg-primary hover:text-white rounded">Men Item 1</a></li>
+                            <li><a href="shop.html" class="min-w-40 block px-4 py-2 hover:bg-primary hover:text-white rounded">Men Item 2</a></li>
+                            <li><a href="shop.html" class="min-w-40 block px-4 py-2 hover:bg-primary hover:text-white rounded">Men Item 3</a></li>
+                        </ul>
+                    </li>
+
+                    {{-- Women --}}
+                    <li class="relative group" x-data="{ open: false }">
+                        <a href="shop.html" @mouseover="open = true" @mouseleave="open = false"
+                            class="hover:text-secondary font-semibold flex items-center">
+                            Women
+                            <i :class="open ? 'fas fa-chevron-up ml-1 text-xs' : 'fas fa-chevron-down ml-1 text-xs'"></i>
+                        </a>
+                        <ul x-show="open" @mouseover="open = true" @mouseleave="open = false"
+                            class="absolute left-0 bg-white text-black space-y-2 mt-1 p-2 rounded shadow-lg"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-90"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-90">
+                            <li><a href="shop.html" class="min-w-40 block px-4 py-2 hover:bg-primary hover:text-white rounded">Women Item 1</a></li>
+                            <li><a href="shop.html" class="min-w-40 block px-4 py-2 hover:bg-primary hover:text-white rounded">Women Item 2</a></li>
+                            <li><a href="shop.html" class="min-w-40 block px-4 py-2 hover:bg-primary hover:text-white rounded">Women Item 3</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="shop.html" class="hover:text-secondary font-semibold">Shop</a></li>
+                    <li><a href="single-product-page.html" class="hover:text-secondary font-semibold">Product</a></li>
+                    <li><a href="404.html" class="hover:text-secondary font-semibold">404 page</a></li>
+                    <li><a href="checkout.html" class="hover:text-secondary font-semibold">Checkout</a></li>
+                </ul>
+            </nav>
+
+            {{-- Kanan: Login/Logout + cart + search --}}
+            <div class="hidden lg:flex items-center space-x-4 relative">
+
+                @guest
+                    <a href="{{ route('login') }}" 
+                        class="px-4 py-2 bg-gradient-to-r from-blue-600 to-green-400 text-white font-bold rounded-lg border-2 border-green-400 hover:from-green-400 hover:to-blue-600 transform hover:scale-105 transition">
+                        Login
+                    </a>
+                @endguest
+
+                @auth
+                    <span class="text-white mr-2">
+                        Halo, {{ Auth::user()->name }}
+                    </span>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                                class="px-4 py-2 bg-transparent text-white border border-green-400 rounded-lg hover:bg-white hover:text-green-600 transform hover:scale-105 transition">
+                            Logout
+                        </button>
+                    </form>
+                @endauth
+
+                <div class="relative group cart-wrapper">
+                    <a href="/cart.html">
+                        <img src="assets/images/cart-shopping.svg" alt="Cart" class="h-6 w-6 group-hover:scale-120">
+                    </a>
+                </div>
+
+                <a id="search-icon" href="javascript:void(0);" class="text-white hover:text-secondary group">
+                    <img src="assets/images/search-icon.svg" alt="Search"
+                        class="h-6 w-6 transition-transform transform group-hover:scale-120">
+                </a>
+
+                <div id="search-field"
+                    class="hidden absolute top-full right-0 mt-2 w-full bg-white shadow-lg p-2 rounded">
+                    <input type="text" class="w-full p-2 border border-gray-300 rounded"
+                        placeholder="Search for products...">
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+
+
+
+        <!-- Hamburger menu (for mobile) -->
+            <button id="hamburger" class="text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Center section: Menu -->
+        <nav class="hidden lg:flex md:flex-grow justify-center">
+            <ul class="flex justify-center space-x-4 text-white">
+                <li><a href="{{ route('user.dashboard') }}" class="hover:text-secondary font-semibold">Home</a></li>
+                <!-- dst: menu Men, Women, Shop, dll biarkan seperti punyamu -->
+                ...
+            </ul>
+        </nav>
+
+        <!-- Right section: Buttons (for desktop) -->
+        <div class="hidden lg:flex items-center space-x-4 relative">
+            <a href="{{ route('login') }}" 
+                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-green-400 text-white font-bold rounded-lg border-2 border-green-400 hover:from-green-400 hover:to-blue-600 transform hover:scale-105 transition">Login</a>
+            <!-- dst: cart, search, dll -->
+            ...
+        </div>
+    </div>
+</header>
+
+
 
             <!-- Hamburger menu (for mobile) -->
             <div class="flex lg:hidden">

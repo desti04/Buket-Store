@@ -45,11 +45,32 @@
             margin-left: 230px;
         }
         button.logout-btn {
-            background: none;
-            color: inherit;
-            outline: none;
-            border: none;
-        }
+    background: none;
+    color: inherit;
+    outline: none;
+    border: none;
+}
+
+.navbar-logo {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.navbar-title {
+    font-weight: 600;
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+.navbar-right-text {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+
     </style>
 </head>
 <body>
@@ -74,11 +95,28 @@
     </div>
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand navbar-light bg-white shadow-sm navbar-custom">
-        <div class="container-fluid">
-            <span class="navbar-brand">Admin Dashboard</span>
+<nav class="navbar navbar-expand navbar-light bg-white shadow-sm navbar-custom">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+        <!-- Bagian kiri: Logo + Judul -->
+        <div class="d-flex align-items-center">
+            <img src="{{ asset('images/logo-buket-new.png') }}" alt="Logo" class="navbar-logo">
+
+
+            <span class="navbar-title">Buket Store Admin</span>
         </div>
-    </nav>
+
+        <!-- Bagian kanan: Informasi User -->
+        <div class="d-flex align-items-center">
+            <span class="navbar-right-text">
+                Halo, {{ Auth::user()->name ?? 'Admin' }}
+            </span>
+        </div>
+
+    </div>
+</nav>
+
+
 
     <!-- CONTENT -->
     <div class="content">
