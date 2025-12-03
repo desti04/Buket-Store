@@ -1,25 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\CartController;
+
 
 /*
 |--------------------------------------------------------------------------
-| HOME → selalu tampil login (tidak auto redirect)
+| HOME
+|--------------------------------------------------------------------------
+| Kalau sudah login → ke dashboard user
+| Kalau belum login → ke halaman login
 |--------------------------------------------------------------------------
 */
 
 Route::get('/', function () {
-    // Kalau sudah login → arahkan ke dashboard user
     if (auth()->check()) {
-        return redirect()->route('user.dashboard');   // atau 'admin.dashboard' kalau mau
+        return redirect()->route('user.dashboard');
     }
-
-    // Kalau belum login → arahkan ke halaman login
     return redirect()->route('login');
 })->name('home');
 
@@ -27,7 +32,7 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH (LOGIN & REGISTER UNTUK TAMU)
+| AUTH ROUTES (HANYA TAMU)
 |--------------------------------------------------------------------------
 */
 
@@ -41,9 +46,10 @@ Route::middleware('guest')->group(function () {
 });
 
 
+
 /*
 |--------------------------------------------------------------------------
-| LOGOUT
+| LOGOUT (HANYA USER LOGIN)
 |--------------------------------------------------------------------------
 */
 
@@ -52,20 +58,61 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 
+
 /*
 |--------------------------------------------------------------------------
-| USER DASHBOARD (hanya setelah login)
+| USER ROUTES (HANYA USER LOGIN)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->get('/user/dashboard', function () {
-    return view('frontend.home');
-})->name('user.dashboard');
+Route::middleware('auth')->group(function () {
+
+    /* DASHBOARD USER */
+    Route::get('/user/dashboard', function () {
+        return view('frontend.home');
+    })->name('user.dashboard');
+
+
+    /* PROFIL USER */
+    Route::get('/user/profile', function () {
+        $user = Auth::user();
+        return view('user.profile', compact('user'));
+    })->name('user.profile');
+
+    /* UPDATE PROFIL USER */
+    Route::post('/user/profile', function (Request $request) {
+
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email'
+        ]);
+
+        $user = Auth::user();
+        $user->update($validated);
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
+    })->name('user.profile.update');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CART / KERANJANG BELANJA (ALA SHOPEE)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+});
+
 
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (hanya setelah login)
+| ADMIN ROUTES (HANYA LOGIN)
 |--------------------------------------------------------------------------
 */
 
@@ -75,11 +122,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
-    // PRODUK
+    /* PRODUK */
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
 
-    // KATEGORI
+    /* KATEGORI */
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
     Route::get('/kategori/tambah', [KategoriController::class, 'create'])->name('kategori.create');
     Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
@@ -87,10 +134,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
     Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 
-    // PESANAN
+    /* PESANAN */
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
-    // PENGGUNA
+    /* PENGGUNA */
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/pengguna/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
     Route::post('/pengguna/tambah', [PenggunaController::class, 'store'])->name('pengguna.store');
@@ -98,5 +145,4 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
     Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
-
 });
