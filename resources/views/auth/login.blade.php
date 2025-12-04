@@ -58,13 +58,13 @@
                         @csrf
 
                         {{-- USERNAME (tetap pakai field email agar backend tidak berubah) --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Username</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">Email</label>
                         <input
                             type="email"
                             name="email"
                             class="w-full px-4 py-2 mb-4 border border-[#e2d4da] rounded-md text-sm
                                    focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                            placeholder="Username">
+                            placeholder="Email">
 
                         {{-- PASSWORD --}}
                         <label class="block mb-2 text-sm font-medium text-gray-700">Password</label>
