@@ -104,7 +104,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6">
 
         {{-- CARD 1 --}}
-        <div class="bg-white shadow-lg rounded-lg p-3 text-center">
+        <div class="bg-white border border-pink-200 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 hover:scale-105 transform transition duration-300 p-4 flex flex-col items-center">
             <img src="{{ asset('images/Buket uang.png') }}" class="rounded h-48 w-full object-cover">
             <p class="mt-3 font-semibold text-lg">Buket Uang</p>
             <p class="text-pink-600 font-bold">Rp 100.000</p>
@@ -132,7 +132,7 @@
         </div>
 
         {{-- CARD 2 --}}
-        <div class="bg-white shadow-lg rounded-lg p-3 text-center">
+        <div class="bg-white border border-pink-200 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 hover:scale-105 transform transition duration-300 p-4 flex flex-col items-center">
             <img src="{{ asset('images/Gambar 2.png') }}" class="rounded h-48 w-full object-cover">
             <p class="mt-3 font-semibold text-lg">Buket Snack</p>
             <p class="text-pink-600 font-bold">Rp 300.000</p>
@@ -156,7 +156,7 @@
         </div>
 
         {{-- CARD 3 --}}
-        <div class="bg-white shadow-lg rounded-lg p-3 text-center">
+        <div class="bg-white border border-pink-200 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 hover:scale-105 transform transition duration-300 p-4 flex flex-col items-center">
             <img src="{{ asset('images/Gambar 6.png') }}" class="rounded h-48 w-full object-cover">
             <p class="mt-3 font-semibold text-lg">Buket Bunga</p>
             <p class="text-pink-600 font-bold">Rp 200.000</p>
@@ -180,7 +180,7 @@
         </div>
 
         {{-- CARD 4 --}}
-        <div class="bg-white shadow-lg rounded-lg p-3 text-center">
+        <div class="bg-white border border-pink-200 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 hover:scale-105 transform transition duration-300 p-4 flex flex-col items-center">
             <img src="{{ asset('images/Foto 1.png') }}" class="rounded h-48 w-full object-cover">
             <p class="mt-3 font-semibold text-lg">Buket Hijab</p>
             <p class="text-pink-600 font-bold">Rp 150.000</p>

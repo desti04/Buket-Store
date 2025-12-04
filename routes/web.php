@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\FrontendController;
 
 
 /*
@@ -72,6 +73,14 @@ Route::middleware('auth')->group(function () {
         return view('frontend.home');
     })->name('user.dashboard');
 
+    /* Menu Buket-Bunga */
+    Route::get('/buket-bunga', [FrontendController::class, 'buketBunga'])->name('buket.bunga');
+    
+    /* Menu Buket-snack */
+    Route::get('/buket-snack', [FrontendController::class, 'buketSnack'])->name('buket.snack');
+    
+    /* Menu Buket-uang */
+    Route::get('/buket-uang', [FrontendController::class, 'buketUang'])->name('buket.uang');
 
     /* PROFIL USER */
     Route::get('/user/profile', function () {
