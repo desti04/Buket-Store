@@ -134,12 +134,6 @@
         </div>
 
         <div class="menu-box">
-            <a href="/admin/kategori">
-                <i class="fa fa-tags"></i> Kategori
-            </a>
-        </div>
-
-        <div class="menu-box">
             <a href="/admin/pesanan">
                 <i class="fa fa-shopping-cart"></i> Pesanan
             </a>
