@@ -3,7 +3,7 @@
 @section('content')
 
 <h3>Selamat Datang, Admin!</h3>
-<p>Ini adalah dashboard admin Buket-Store.</p>
+<p>Ini adalah dashboard admin Buket de Fleur.</p>
 
 <div class="row mt-4">
 
