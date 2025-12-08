@@ -4,42 +4,37 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+/* Controllers */
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
-
-
+use App\Http\Controllers\UserProfileController;
+use App\Models\Address;
 
 /*
 |--------------------------------------------------------------------------
 | HOME
 |--------------------------------------------------------------------------
-| Kalau sudah login → ke dashboard user
-| Kalau belum login → ke halaman login
-|--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('user.dashboard');
-    }
-    return redirect()->route('login');
+    return auth()->check()
+        ? redirect()->route('user.dashboard')
+        : redirect()->route('login');
 })->name('home');
-
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTH ROUTES (HANYA TAMU)
+| AUTH (GUEST)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('guest')->group(function () {
 
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -63,69 +58,92 @@ Route::middleware('guest')->group(function () {
 });
 
 
-
-
 /*
 |--------------------------------------------------------------------------
-| LOGOUT (HANYA USER LOGIN)
+| LOGOUT
 |--------------------------------------------------------------------------
 */
-
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
 
-
 /*
 |--------------------------------------------------------------------------
-| USER ROUTES (HANYA USER LOGIN)
+| USER ROUTES (LOGIN)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->group(function () {
 
-    /* DASHBOARD USER */
-    Route::get('/user/dashboard', function () {
-        return view('frontend.home');
-    })->name('user.dashboard');
+    /* DASHBOARD */
+    Route::get('/user/dashboard', fn() => view('frontend.home'))
+        ->name('user.dashboard');
 
-    /* Menu Buket-Bunga */
+    /* PRODUK */
     Route::get('/buket-bunga', [FrontendController::class, 'buketBunga'])->name('buket.bunga');
-    
-    /* Menu Buket-snack */
     Route::get('/buket-snack', [FrontendController::class, 'buketSnack'])->name('buket.snack');
-    
-    /* Menu Buket-uang */
     Route::get('/buket-uang', [FrontendController::class, 'buketUang'])->name('buket.uang');
 
-    /* PROFIL USER */
-    Route::get('/user/profile', function () {
-        $user = Auth::user();
-        return view('user.profile', compact('user'));
-    })->name('user.profile');
+    /* DETAIL PRODUK */
+    Route::get('/produk/detail', [FrontendController::class, 'detailProduk'])
+        ->name('produk.detail');
 
-    /* UPDATE PROFIL USER */
-    Route::post('/user/profile', function (Request $request) {
+    /* CART: ADD FROM DETAIL */
+    Route::post('/cart/add-detail', [CartController::class, 'addFromDetail'])
+        ->name('cart.add.detail');
 
-        $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email'
-        ]);
+    /*
+    |--------------------------------------------------------------------------
+    | BUY NOW + CHECKOUT
+    |--------------------------------------------------------------------------
+    */
 
-        $user = Auth::user();
-        $user->update($validated);
+    // BUY NOW → klik Pesan Sekarang
+    Route::post('/checkout/buy-now', [CartController::class, 'buyNow'])
+        ->name('checkout.buyNow');
 
-        return back()->with('success', 'Profil berhasil diperbarui.');
-    })->name('user.profile.update');
+    // CHECKOUT NORMAL (keranjang)
+    Route::get('/checkout', function () {
+        $cart = session('cart', []);
+        $total = collect($cart)->sum(fn($i) => $i['qty'] * $i['price']);
+        $alamat = Address::where('user_id', auth()->id())->first();
+
+        return view('cart.checkout', compact('cart', 'total', 'alamat'));
+    })->name('cart.checkout');
 
 
     /*
     |--------------------------------------------------------------------------
-    | CART / KERANJANG BELANJA (ALA SHOPEE)
+    | PROFIL USER
     |--------------------------------------------------------------------------
     */
 
+    Route::get('/user/profile', [UserProfileController::class, 'index'])->name('profile.index');
+    Route::post('/user/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/user/password/change', [UserProfileController::class, 'changePassword'])->name('password.change');
+    Route::post('/user/password/update', [UserProfileController::class, 'updatePassword'])->name('password.update');
+
+    /* ALAMAT */
+    Route::get('/user/alamat', [AddressController::class, 'index'])
+        ->name('profile.address.index');
+
+    Route::get('/user/alamat/tambah', [AddressController::class, 'create'])
+        ->name('profile.address.create');
+
+    Route::post('/user/alamat/tambah', [AddressController::class, 'store'])
+        ->name('profile.address.store');
+
+    /* PESANAN USER */
+    Route::get('/user/orders', [UserProfileController::class, 'orders'])
+        ->name('orders.index');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CART ROUTES
+    |--------------------------------------------------------------------------
+    */
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
@@ -135,18 +153,14 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (HANYA LOGIN)
+| ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
     /* PRODUK */
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');

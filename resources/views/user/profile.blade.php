@@ -1,78 +1,77 @@
 @extends('layouts.app')
 
-@section('title', 'Profil Saya')
-
 @section('content')
-<div class="bg-pink-50 py-10">
-    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8">
+<div class="min-h-screen flex bg-[#f8f6f9]">
 
-        {{-- Header profil --}}
-        <div class="flex items-center gap-4 mb-6">
-            <div class="w-16 h-16 rounded-full bg-pink-500 flex items-center justify-center text-white text-2xl font-bold">
-                {{ strtoupper(substr($user->name, 0, 1)) }}
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold text-pink-700">Profil Pengguna</h1>
-                <p class="text-sm text-gray-500">Kelola data akun kamu di sini</p>
-            </div>
-        </div>
+    {{-- Sidebar --}}
+    <aside class="w-64 bg-white shadow-md p-6 hidden md:block">
+        <h2 class="text-xl font-semibold mb-6">Akun Saya</h2>
 
-        {{-- Notifikasi sukses --}}
-        @if (session('success'))
-            <div class="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-700 text-sm rounded">
-                {{ session('success') }}
-            </div>
-        @endif
+        <nav class="space-y-3">
+            <a href="{{ route('profile.index') }}"
+               class="block py-2 px-3 rounded font-medium {{ request()->routeIs('profile.index') ? 'bg-[#d08a9b] text-white' : 'hover:bg-gray-200' }}">
+               Profil
+            </a>
 
-        {{-- Error --}}
-        @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-sm rounded">
-                {{ $errors->first() }}
-            </div>
-        @endif
+            <a href="{{ route('profile.address.index') }}"
+                class="block py-2 px-3 rounded font-medium {{ request()->routeIs('profile.address.index') ? 'bg-[#d08a9b] text-white' : '' }}">
+                Alamat Saya
+            </a>
 
-        {{-- Form Profil --}}
-        <form action="{{ route('user.profile.update') }}" method="POST" class="space-y-4">
-            @csrf
+            <a href="{{ route('password.change') }}"
+               class="block py-2 px-3 rounded font-medium {{ request()->routeIs('password.change') ? 'bg-[#d08a9b] text-white' : 'hover:bg-gray-200' }}">
+               Ubah Password
+            </a>
 
-            <div>
-                <label class="block mb-1 font-medium text-gray-700">Nama Lengkap</label>
-                <input type="text" name="name"
-                       value="{{ old('name', $user->name) }}"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">
-            </div>
+            <a href="{{ route('orders.index') }}"
+               class="block py-2 px-3 rounded font-medium {{ request()->routeIs('orders.index') ? 'bg-[#d08a9b] text-white' : 'hover:bg-gray-200' }}">
+               Pesanan Saya
+            </a>
 
-            <div>
-                <label class="block mb-1 font-medium text-gray-700">Email</label>
-                <input type="email" name="email"
-                       value="{{ old('email', $user->email) }}"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">
-            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="w-full text-left py-2 px-3 rounded hover:bg-gray-200">Logout</button>
+            </form>
+        </nav>
+    </aside>
 
-            {{-- Kalau nanti mau tambah field lain --}}
-            {{--
-            <div>
-                <label class="block mb-1 font-medium text-gray-700">No. Telepon</label>
-                <input type="text" name="phone"
-                       value="{{ old('phone', $user->phone ?? '') }}"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">
-            </div>
+    {{-- Isi Halaman --}}
+    <main class="flex-1 p-6 md:p-10">
+        <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+            <h3 class="text-xl font-semibold mb-6">Profil Saya</h3>
 
-            <div>
-                <label class="block mb-1 font-medium text-gray-700">Alamat</label>
-                <textarea name="address" rows="3"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">{{ old('address', $user->address ?? '') }}</textarea>
-            </div>
-            --}}
+            @if (session('success'))
+                <div class="p-3 bg-green-100 border border-green-400 text-green-700 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-            <div class="pt-4 flex justify-end">
-                <button type="submit"
-                        class="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg">
-                    Simpan Perubahan
-                </button>
-            </div>
-        </form>
+            <form action="{{ route('profile.update') }}" method="POST">
+                @csrf
 
+                <div class="space-y-5">
+
+    <div>
+        <label class="text-sm font-medium">Nama Lengkap</label>
+        <input type="text" name="name" value="{{ auth()->user()->name }}"
+               class="w-full mt-2 p-2 rounded border">
     </div>
+
+    <div>
+        <label class="text-sm font-medium">Email</label>
+        <input type="email" name="email" value="{{ auth()->user()->email }}"
+               class="w-full mt-2 p-2 rounded border bg-gray-100 cursor-not-allowed"
+               readonly>
+    </div>
+
+    <button type="submit"
+            class="mt-4 bg-[#d08a9b] text-white px-5 py-2 rounded hover:bg-[#c17889] transition">
+        Simpan Perubahan
+    </button>
+</div>
+
+            </form>
+        </div>
+    </main>
 </div>
 @endsection
