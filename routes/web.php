@@ -12,6 +12,11 @@ use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\UserProfileController;
+use App\Models\Address;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,39 +32,62 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH ROUTES (HANYA TAMU)
+| AUTH (GUEST)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    Route::get('/login',  [AuthController::class, 'showLoginForm'])->name('login');
+
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-    Route::get('/register',  [AuthController::class, 'registerForm'])->name('register');
+    Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-});
 
+    // LUPA PASSWORD
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+        ->name('password.request');
+
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])
+        ->name('password.update');
+
+        Route::get('/verify-email',         [VerifyEmailController::class, 'show'])->name('verify.show');
+Route::post('/verify-email',        [VerifyEmailController::class, 'verify'])->name('verify.post');
+Route::post('/verify-email/resend', [VerifyEmailController::class, 'resend'])->name('verify.resend');
+
+});
 
 /*
 |--------------------------------------------------------------------------
-| LOGOUT (HANYA USER LOGIN)
+| LOGOUT
 |--------------------------------------------------------------------------
 */
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+// ===============================
+// HALAMAN BUTUH BANTUAN (PUBLIC)
+// ===============================
+Route::get('/bantuan', function () {
+    return view('help');
+})->name('bantuan');
 
 /*
 |--------------------------------------------------------------------------
-| USER ROUTES (HANYA USER LOGIN)
+| USER ROUTES (LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    /* DASHBOARD USER */
-    Route::get('/user/dashboard', function () {
-        return view('frontend.home');
-    })->name('user.dashboard');
+    /* DASHBOARD */
+    Route::get('/user/dashboard', fn() => view('frontend.home'))
+        ->name('user.dashboard');
 
     /* Menu Buket */
     Route::get('/buket-bunga', [FrontendController::class, 'buketBunga'])->name('buket.bunga');
@@ -71,26 +99,66 @@ Route::middleware('auth')->group(function () {
         ->whereNumber('id')
         ->name('produk.detail');
 
-    /* PROFIL USER */
-    Route::get('/user/profile', function () {
-        $user = Auth::user();
-        return view('user.profile', compact('user'));
-    })->name('user.profile');
+    /* DETAIL PRODUK */
+    Route::get('/produk/detail', [FrontendController::class, 'detailProduk'])
+        ->name('produk.detail');
 
-    /* UPDATE PROFIL USER */
-    Route::post('/user/profile', function (Request $request) {
-        $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email'
-        ]);
+    /* CART: ADD FROM DETAIL */
+    Route::post('/cart/add-detail', [CartController::class, 'addFromDetail'])
+        ->name('cart.add.detail');
 
-        $user = Auth::user();
-        $user->update($validated);
+    /*
+    |--------------------------------------------------------------------------
+    | BUY NOW + CHECKOUT
+    |--------------------------------------------------------------------------
+    */
 
-        return back()->with('success', 'Profil berhasil diperbarui.');
-    })->name('user.profile.update');
+    // BUY NOW → klik Pesan Sekarang
+    Route::post('/checkout/buy-now', [CartController::class, 'buyNow'])
+        ->name('checkout.buyNow');
 
-    /* CART */
+    // CHECKOUT NORMAL (keranjang)
+    Route::get('/checkout', function () {
+        $cart = session('cart', []);
+        $total = collect($cart)->sum(fn($i) => $i['qty'] * $i['price']);
+        $alamat = Address::where('user_id', auth()->id())->first();
+
+        return view('cart.checkout', compact('cart', 'total', 'alamat'));
+    })->name('cart.checkout');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL USER
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/user/profile', [UserProfileController::class, 'index'])->name('profile.index');
+    Route::post('/user/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/user/password/change', [UserProfileController::class, 'changePassword'])->name('password.change');
+    Route::post('/user/password/update', [UserProfileController::class, 'updatePassword'])->name('password.update');
+
+    /* ALAMAT */
+    Route::get('/user/alamat', [AddressController::class, 'index'])
+        ->name('profile.address.index');
+
+    Route::get('/user/alamat/tambah', [AddressController::class, 'create'])
+        ->name('profile.address.create');
+
+    Route::post('/user/alamat/tambah', [AddressController::class, 'store'])
+        ->name('profile.address.store');
+
+    /* PESANAN USER */
+    Route::get('/user/orders', [UserProfileController::class, 'orders'])
+        ->name('orders.index');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CART ROUTES
+    |--------------------------------------------------------------------------
+    */
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
@@ -101,37 +169,37 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (HANYA LOGIN)
+| ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
-    // Produk
-    Route::get('/produk',         [ProdukController::class, 'index'])->name('produk');
+    /* PRODUK */
+    Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
 
-    // Kategori
-    Route::get('/kategori',           [KategoriController::class, 'index'])->name('kategori.index');
-    Route::get('/kategori/tambah',    [KategoriController::class, 'create'])->name('kategori.create');
-    Route::post('/kategori',          [KategoriController::class, 'store'])->name('kategori.store');
+    /* KATEGORI */
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::get('/kategori/tambah', [KategoriController::class, 'create'])->name('kategori.create');
+    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
     Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
-    Route::put('/kategori/{id}',      [KategoriController::class, 'update'])->name('kategori.update');
-    Route::delete('/kategori/{id}',   [KategoriController::class, 'destroy'])->name('kategori.destroy');
+    Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 
-    // Pesanan
+    /* PESANAN */
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
     Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
     Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::get('/pesanan/print', [PesananController::class, 'print'])->name('pesanan.print');
 
-    // Pengguna
-    Route::get('/pengguna',           [PenggunaController::class, 'index'])->name('pengguna.index');
-    Route::get('/pengguna/tambah',    [PenggunaController::class, 'create'])->name('pengguna.create');
-    Route::post('/pengguna/tambah',   [PenggunaController::class, 'store'])->name('pengguna.store');
-    Route::get('/pengguna/{id}',      [PenggunaController::class, 'show'])->name('pengguna.show');
+    /* PENGGUNA */
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+    Route::get('/pengguna/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
+    Route::post('/pengguna/tambah', [PenggunaController::class, 'store'])->name('pengguna.store');
+    Route::get('/pengguna/{id}', [PenggunaController::class, 'show'])->name('pengguna.show');
     Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
-    Route::put('/pengguna/{id}',      [PenggunaController::class, 'update'])->name('pengguna.update');
-    Route::delete('/pengguna/{id}',   [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+    Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
+    Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 });
