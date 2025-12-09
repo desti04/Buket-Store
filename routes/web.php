@@ -4,35 +4,36 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+/* Controllers */
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontendController;
 
-// ➕ OTP controller
-use App\Http\Controllers\Auth\VerifyEmailController;
 
 /*
 |--------------------------------------------------------------------------
 | HOME
 |--------------------------------------------------------------------------
-| Login user → ke dashboard
-| Tamu → ke halaman login
+| Kalau sudah login → ke dashboard user
+| Kalau belum login → ke halaman login
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('user.dashboard');
-    }
-    return redirect()->route('login');
+    return auth()->check()
+        ? redirect()->route('user.dashboard')
+        : redirect()->route('login');
 })->name('home');
+
+
 
 /*
 |--------------------------------------------------------------------------
-| AUTH (TAMU SAJA)
+| AUTH ROUTES (HANYA TAMU)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
@@ -45,76 +46,83 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
 
-/*
-|--------------------------------------------------------------------------
-| OTP EMAIL VERIFICATION (boleh diakses tanpa login)
-|--------------------------------------------------------------------------
-| /verify-email?email=... → form OTP
-|--------------------------------------------------------------------------
-*/
-Route::get('/verify-email',         [VerifyEmailController::class, 'show'])->name('verify.show');
-Route::post('/verify-email',        [VerifyEmailController::class, 'verify'])->name('verify.post');
-Route::post('/verify-email/resend', [VerifyEmailController::class, 'resend'])->name('verify.resend');
+
 
 /*
 |--------------------------------------------------------------------------
-| LOGOUT (HARUS LOGIN)
+| LOGOUT (HANYA USER LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+
+
 /*
 |--------------------------------------------------------------------------
-| USER (HARUS LOGIN)
+| USER ROUTES (HANYA USER LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    // Dashboard user
+    /* DASHBOARD USER */
     Route::get('/user/dashboard', function () {
         return view('frontend.home');
     })->name('user.dashboard');
 
-    // Katalog
+    /* Menu Buket-Bunga */
     Route::get('/buket-bunga', [FrontendController::class, 'buketBunga'])->name('buket.bunga');
     Route::get('/buket-snack', [FrontendController::class, 'buketSnack'])->name('buket.snack');
-    Route::get('/buket-uang',  [FrontendController::class, 'buketUang'])->name('buket.uang');
+    
+    /* Menu Buket-uang */
+    Route::get('/buket-uang', [FrontendController::class, 'buketUang'])->name('buket.uang');
 
-    // Profil
+    /* PROFIL USER */
     Route::get('/user/profile', function () {
         $user = Auth::user();
         return view('user.profile', compact('user'));
     })->name('user.profile');
 
+    /* UPDATE PROFIL USER */
     Route::post('/user/profile', function (Request $request) {
+
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email'
         ]);
-        Auth::user()->update($validated);
+
+        $user = Auth::user();
+        $user->update($validated);
+
         return back()->with('success', 'Profil berhasil diperbarui.');
     })->name('user.profile.update');
 
-    // Cart
-    Route::get('/cart',             [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{id}',   [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update/{id}',[CartController::class, 'update'])->name('cart.update');
-    Route::post('/cart/remove/{id}',[CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/cart/clear',      [CartController::class, 'clear'])->name('cart.clear');
+
+    /*
+    |--------------------------------------------------------------------------
+    | CART / KERANJANG BELANJA (ALA SHOPEE)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
 });
+
+
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN (HARUS LOGIN)
+| ADMIN ROUTES (HANYA LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
     // Produk
     Route::get('/produk',           [ProdukController::class, 'index'])->name('produk');
@@ -130,6 +138,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+    Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])
+        ->name('pesanan.updateStatus');
+
+    Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])
+        ->name('pesanan.destroy');
+
+    // 👉 ROUTE PRINT LAPORAN
+    Route::get('/pesanan/print', [PesananController::class, 'print'])->name('pesanan.print');
 
     // Pengguna
     Route::get('/pengguna',           [PenggunaController::class, 'index'])->name('pengguna.index');

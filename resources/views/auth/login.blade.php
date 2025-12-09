@@ -57,7 +57,7 @@
                     <form method="POST" action="{{ route('login.post') }}">
                         @csrf
 
-                        {{-- USERNAME (tetap pakai field email agar backend tidak berubah) --}}
+                        {{-- EMAIL --}}
                         <label class="block mb-2 text-sm font-medium text-gray-700">Email</label>
                         <input
                             type="email"
@@ -71,9 +71,17 @@
                         <input
                             type="password"
                             name="password"
-                            class="w-full px-4 py-2 mb-6 border border-[#e2d4da] rounded-md text-sm
+                            class="w-full px-4 py-2 mb-2 border border-[#e2d4da] rounded-md text-sm
                                    focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
                             placeholder="Password">
+
+                        {{-- LUPA SANDI --}}
+                        <div class="flex justify-end mb-4">
+                            <a href="{{ route('password.request') }}"
+                               class="text-xs text-[#a154ae] hover:text-[#8b3f97] font-semibold">
+                                Lupa sandi?
+                            </a>
+                        </div>
 
                         {{-- TOMBOL LOGIN --}}
                         <button
@@ -84,15 +92,15 @@
                         </button>
 
                         {{-- TEKS REGISTER (RATA KANAN SEPERTI DI GAMBAR) --}}
-                    <div class="mt-3 w-full flex justify-center">
-                        <p class="text-sm text-gray-600">
-                            Belum memiliki akun?
-                            <a href="{{ route('register') }}"
-                            class="text-[#a154ae] hover:text-[#8b3f97] font-semibold ml-1">
-                                Register
-                            </a>
-                        </p>
-                    </div>
+                        <div class="mt-3 w-full flex justify-center">
+                            <p class="text-sm text-gray-600">
+                                Belum memiliki akun?
+                                <a href="{{ route('register') }}"
+                                   class="text-[#a154ae] hover:text-[#8b3f97] font-semibold ml-1">
+                                    Register
+                                </a>
+                            </p>
+                        </div>
                     </form>
 
                 </div>

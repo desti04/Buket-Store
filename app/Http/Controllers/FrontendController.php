@@ -13,28 +13,36 @@ class FrontendController extends Controller
 
     public function buketBunga()
     {
-        // ambil produk kategori bunga dari database
-        $produkBunga = \App\Models\Produk::where('kategori', 'bunga')->take(10)->get();
-
+        $produkBunga = \App\Models\Produk::where('id_kategori', 1)->take(10)->get();
         return view('frontend.buket-bunga', compact('produkBunga'));
     }
 
     public function buketSnack()
     {
-        // ambil produk kategori bunga dari database
-        $produkSnack = \App\Models\Produk::where('kategori', 'bunga')->take(10)->get();
-        
+        $produkSnack = \App\Models\Produk::where('id_kategori', 2)->take(10)->get();
         return view('frontend.buket-snack', compact('produkSnack'));
     }
 
     public function buketUang()
     {
-        // ambil produk kategori bunga dari database
-        $produkUang = \App\Models\Produk::where('kategori', 'bunga')->take(10)->get();
-        
+        $produkUang = \App\Models\Produk::where('id_kategori', 3)->take(10)->get();
         return view('frontend.buket-uang', compact('produkUang'));
     }
 
-
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL PRODUK
+    |--------------------------------------------------------------------------
+    | Mengirim data dari query string (img, title, price, desc)
+    |--------------------------------------------------------------------------
+    */
+    public function detailProduk(Request $request)
+    {
+        return view('user.product-detail', [
+            'img'   => $request->img,
+            'title' => $request->title,
+            'price' => $request->price,
+            'desc'  => $request->desc,
+        ]);
+    }
 }
-
