@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Models;
 
@@ -24,6 +24,10 @@ class User extends Authenticatable
         'address',
         'role',
         'status',
+        // ⬇️ tambahan untuk OTP & verifikasi email
+        'email_verified_at',
+        'otp_code',
+        'otp_expires_at',
     ];
 
     /**
@@ -34,6 +38,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // ⬇️ jangan expose kode OTP mentah/hashed
+        'otp_code',
     ];
 
     /**
@@ -45,7 +51,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'otp_expires_at'    => 'datetime', // ⬅️ penting untuk perbandingan waktu
+            'password'          => 'hashed',
         ];
     }
 

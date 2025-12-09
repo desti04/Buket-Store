@@ -4,40 +4,34 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
-        // Perhatikan kita pakai Schema::table (untuk EDIT), bukan Schema::create
-        Schema::table('produk', function (Blueprint $table) {
-            
-            // 1. Tambah Kolom
-            // Kita taruh setelah kolom 'id' biar rapi
-            $table->unsignedBigInteger('id_kategori')->nullable()->after('id');
+        // Tambah kolom hanya jika BELUM ada
+        if (!Schema::hasColumn('produk', 'id_kategori')) {
+            Schema::table('produk', function (Blueprint $table) {
+                // kalau mau simple:
+                $table->unsignedBigInteger('id_kategori')->nullable()->after('id');
 
-            // 2. Tambah Relasi (Foreign Key)
-            // Pastikan tabel 'kategori' sudah ada sebelumnya!
-            $table->foreign('id_kategori')
-                  ->references('id')
-                  ->on('kategori')
-                  ->onDelete('set null'); // Atau 'cascade'
-        });
+                // OPSIONAL: kalau mau tambahkan foreign key (kalau memang belum ada)
+                // Hati-hati: kalau constraint sudah ada, baris ini bisa error.
+                // Jadi lebih aman dilepas dulu, atau kamu pastikan memang belum ada.
+                // $table->foreign('id_kategori')->references('id')->on('kategori')->nullOnDelete();
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('produk', function (Blueprint $table) {
-            // Hapus foreign key dulu (wajib array syntax biar aman)
-            $table->dropForeign(['id_kategori']);
-            
-            // Baru hapus kolomnya
-            $table->dropColumn('id_kategori');
-        });
+        // Hapus kolom hanya jika memang ada
+        if (Schema::hasColumn('produk', 'id_kategori')) {
+            Schema::table('produk', function (Blueprint $table) {
+                // Jika kamu sebelumnya menambah FK, drop dulu FK-nya di sini.
+                // Nama constraint FK bisa berbeda-beda; kalau tidak yakin, lewati baris dropForeign.
+                // $table->dropForeign(['id_kategori']);
+
+                $table->dropColumn('id_kategori');
+            });
+        }
     }
 };
