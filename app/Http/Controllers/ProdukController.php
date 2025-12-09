@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Produk;
-use App\Models\Kategori; // Pastikan baris ini ada
+use App\Models\Kategori;
 
 class ProdukController extends Controller
 {
@@ -16,20 +16,17 @@ class ProdukController extends Controller
         return view('admin.produk.index', compact('produk', 'kategori'));
     }
 
-    // SAYA UBAH NAMANYA DARI 'tambah' MENJADI 'store' AGAR TIDAK ERROR
     public function store(Request $request)
     {
-        // 1. Validasi
         $request->validate([
             'nama'        => 'required',
-            'id_kategori' => 'required', // Wajib ada
+            'id_kategori' => 'required',
             'harga'       => 'required|numeric',
             'stok'        => 'required|numeric',
             'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'deskripsi'   => 'nullable|string'
         ]);
 
-        // 2. Upload Foto
         $nama_file = null;
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
@@ -37,7 +34,6 @@ class ProdukController extends Controller
             $file->move(public_path('images'), $nama_file);
         }
 
-        // 3. Simpan
         Produk::create([
             'nama'        => $request->nama,
             'id_kategori' => $request->id_kategori,
@@ -48,5 +44,23 @@ class ProdukController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
+    }
+
+    /**
+     * DETAIL PRODUK (frontend)
+     * Saat ini kamu kirim data produk via query string dari home.blade.php,
+     * jadi kita ambil dari request query.
+     */
+    public function detail($id, Request $request)
+    {
+        $produk = [
+            'id'    => $id,
+            'img'   => $request->query('img'),
+            'title' => $request->query('title'),
+            'price' => $request->query('price'),
+            'desc'  => $request->query('desc'),
+        ];
+
+        return view('frontend.produk_detail', compact('produk'));
     }
 }

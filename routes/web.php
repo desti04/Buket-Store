@@ -8,19 +8,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\KategoriController;
-use App\Http\Controllers\AddressController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FrontendController;
 
-
 /*
 |--------------------------------------------------------------------------
 | HOME
-|--------------------------------------------------------------------------
-| Kalau sudah login → ke dashboard user
-| Kalau belum login → ke halaman login
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
@@ -30,22 +25,18 @@ Route::get('/', function () {
 })->name('home');
 
 
-
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES (HANYA TAMU)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    // Login
     Route::get('/login',  [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-    // Register
     Route::get('/register',  [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
-
 
 
 /*
@@ -56,7 +47,6 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
-
 
 
 /*
@@ -71,12 +61,15 @@ Route::middleware('auth')->group(function () {
         return view('frontend.home');
     })->name('user.dashboard');
 
-    /* Menu Buket-Bunga */
+    /* Menu Buket */
     Route::get('/buket-bunga', [FrontendController::class, 'buketBunga'])->name('buket.bunga');
     Route::get('/buket-snack', [FrontendController::class, 'buketSnack'])->name('buket.snack');
-    
-    /* Menu Buket-uang */
-    Route::get('/buket-uang', [FrontendController::class, 'buketUang'])->name('buket.uang');
+    Route::get('/buket-uang',  [FrontendController::class, 'buketUang'])->name('buket.uang');
+
+    /* ✅ DETAIL PRODUK (yang dipanggil dari home.blade.php) */
+    Route::get('/produk/{id}', [ProdukController::class, 'detail'])
+        ->whereNumber('id')
+        ->name('produk.detail');
 
     /* PROFIL USER */
     Route::get('/user/profile', function () {
@@ -86,7 +79,6 @@ Route::middleware('auth')->group(function () {
 
     /* UPDATE PROFIL USER */
     Route::post('/user/profile', function (Request $request) {
-
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
             'email' => 'required|email'
@@ -98,21 +90,13 @@ Route::middleware('auth')->group(function () {
         return back()->with('success', 'Profil berhasil diperbarui.');
     })->name('user.profile.update');
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | CART / KERANJANG BELANJA (ALA SHOPEE)
-    |--------------------------------------------------------------------------
-    */
-
+    /* CART */
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-
 });
-
 
 
 /*
@@ -125,8 +109,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
     // Produk
-    Route::get('/produk',           [ProdukController::class, 'index'])->name('produk');
-    Route::post('/produk/tambah',   [ProdukController::class, 'store'])->name('produk.tambah');
+    Route::get('/produk',         [ProdukController::class, 'index'])->name('produk');
+    Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
 
     // Kategori
     Route::get('/kategori',           [KategoriController::class, 'index'])->name('kategori.index');
@@ -138,13 +122,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
-    Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])
-        ->name('pesanan.updateStatus');
-
-    Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])
-        ->name('pesanan.destroy');
-
-    // 👉 ROUTE PRINT LAPORAN
+    Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+    Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
     Route::get('/pesanan/print', [PesananController::class, 'print'])->name('pesanan.print');
 
     // Pengguna

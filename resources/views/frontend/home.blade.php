@@ -222,27 +222,33 @@ document.addEventListener('DOMContentLoaded', function () {
             ];
         @endphp
 
-        @foreach ($products as $p)
-        <div 
-            onclick="window.location='{{ route('produk.detail') }}?img={{ urlencode($p['img']) }}&title={{ urlencode($p['title']) }}&price={{ urlencode($p['price']) }}&desc={{ urlencode($p['description']) }}'"
-            class="cursor-pointer bg-white border rounded-xl shadow-md hover:shadow-xl 
-                   hover:-translate-y-1 transition-all duration-300 p-3 group">
+        @foreach ($products as $i => $p)
+    @php
+        $url = route('produk.detail', ['id' => $i + 1])
+            . '?img=' . urlencode($p['img'])
+            . '&title=' . urlencode($p['title'])
+            . '&price=' . urlencode($p['price'])
+            . '&desc=' . urlencode($p['description']);
+    @endphp
 
-            <div class="relative overflow-hidden rounded-lg">
-                <img src="{{ asset('images/' . $p['img']) }}" 
-                     class="w-full h-48 object-cover rounded-lg transition-all duration-300 group-hover:scale-105">
+    <div
+        onclick="window.location='{{ $url }}'"
+        class="cursor-pointer bg-white border rounded-xl shadow-md hover:shadow-xl
+               hover:-translate-y-1 transition-all duration-300 p-3 group">
 
-                <span class="absolute top-2 left-2 bg-yellow-400 text-[10px] px-2 py-[2px] rounded-full">
-                    ⭐ Star
-                </span>
-            </div>
+        <div class="relative overflow-hidden rounded-lg">
+            <img src="{{ asset('images/' . $p['img']) }}"
+                 class="w-full h-48 object-cover rounded-lg transition-all duration-300 group-hover:scale-105">
 
-            <p class="text-[14px] mt-3 font-semibold">{{ $p['title'] }}</p>
-            <p class="text-pink-600 font-bold text-[15px]">{{ $p['price'] }}</p>
+            <span class="absolute top-2 left-2 bg-yellow-400 text-[10px] px-2 py-[2px] rounded-full">
+                ⭐ Star
+            </span>
         </div>
-        @endforeach
 
+        <p class="text-[14px] mt-3 font-semibold">{{ $p['title'] }}</p>
+        <p class="text-pink-600 font-bold text-[15px]">{{ $p['price'] }}</p>
     </div>
+@endforeach
 </div>
 
 @endsection
