@@ -13,19 +13,19 @@ class FrontendController extends Controller
 
     public function buketBunga()
     {
-        $produkBunga = \App\Models\Produk::where('kategori', 'bunga')->take(10)->get();
+        $produkBunga = \App\Models\Produk::where('id_kategori', 1)->take(10)->get();
         return view('frontend.buket-bunga', compact('produkBunga'));
     }
 
     public function buketSnack()
     {
-        $produkSnack = \App\Models\Produk::where('kategori', 'snack')->take(10)->get();
+        $produkSnack = \App\Models\Produk::where('id_kategori', 2)->take(10)->get();
         return view('frontend.buket-snack', compact('produkSnack'));
     }
 
     public function buketUang()
     {
-        $produkUang = \App\Models\Produk::where('kategori', 'uang')->take(10)->get();
+        $produkUang = \App\Models\Produk::where('id_kategori', 3)->take(10)->get();
         return view('frontend.buket-uang', compact('produkUang'));
     }
 

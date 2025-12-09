@@ -1,57 +1,87 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
-    <h2 class="mb-4">Daftar Pesanan</h2>
 
-    {{-- Alert sukses / error --}}
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4>Daftar Pesanan</h4>
 
-    <div class="card">
-        <div class="card-header">
-            List Pesanan
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-hover mb-0">
-                <thead>
+        <!-- Tombol Print -->
+        <a href="{{ route('admin.pesanan.print') }}" 
+           target="_blank" 
+           class="btn btn-secondary btn-sm">
+            <i class="fa fa-print"></i> Print Laporan
+        </a>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="text-center">
                     <tr>
-                        <th style="width: 70px;">ID</th>
+                        <th>ID</th>
                         <th>Nama Customer</th>
-                        <th>No. HP</th>
-                        <th>Total</th>
+                        <th>Produk</th>
+                        <th>Jumlah</th>
+                        <th>Total Harga</th>
                         <th>Status</th>
                         <th>Tanggal</th>
-                        <th style="width: 130px;">Aksi</th>
+                        <th>Metode Pembayaran</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    @forelse($pesanan as $p)
-                        <tr>
-                            <td>{{ $p->id }}</td>
-                            <td>{{ $p->nama_customer }}</td>
-                            <td>{{ $p->no_hp }}</td>
-                            <td>Rp {{ number_format($p->total, 0, ',', '.') }}</td>
-                            <td>{{ $p->status }}</td>
-                            <td>{{ $p->created_at?->format('d/m/Y H:i') }}</td>
-                            <td>
-                                {{-- nanti kalau sudah ada route show, baru aktifkan --}}
-                                {{-- <a href="{{ route('admin.pesanan.show', $p->id) }}" class="btn btn-sm btn-info">Detail</a> --}}
-                                -
-                            </td>
-                        </tr>
+                    @forelse ($pesanan as $p)
+                    <tr>
+                        <td class="text-center">{{ $p->id }}</td>
+                        <td>{{ $p->nama_pemesan }}</td>
+                        <td>{{ $p->produk }}</td>
+                        <td class="text-center">{{ $p->jumlah }}</td>
+                        <td>Rp {{ number_format($p->total_harga, 0, ',', '.') }}</td>
+
+                        <td class="text-center">
+                            @if ($p->status == 'pending')
+                                <span class="badge bg-warning text-dark">pending</span>
+                            @elseif ($p->status == 'batal')
+                                <span class="badge bg-danger">batal</span>
+                            @else
+                                <span class="badge bg-success">selesai</span>
+                            @endif
+                        </td>
+
+                        <td>{{ $p->created_at->format('Y-m-d H:i') }}</td>
+
+                        <td class="text-center">COD</td>
+
+                        <td class="text-center">
+                            <form action="{{ route('admin.pesanan.updateStatus', $p->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('PUT')
+                                <button name="status" value="selesai" class="btn btn-success btn-sm mb-1">
+                                    Terima
+                                </button>
+                            </form>
+
+                            <form action="{{ route('admin.pesanan.updateStatus', $p->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('PUT')
+                                <button name="status" value="batal" class="btn btn-danger btn-sm">
+                                    Tolak
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="text-center">Belum ada pesanan</td>
-                        </tr>
+                    <tr>
+                        <td colspan="9" class="text-center">Belum ada pesanan</td>
+                    </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
     </div>
 </div>
+
 @endsection
