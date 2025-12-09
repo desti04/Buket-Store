@@ -145,6 +145,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     /* PESANAN */
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+    Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])
+        ->name('pesanan.updateStatus');
+
+    Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])
+        ->name('pesanan.destroy');
+
+    // 👉 ROUTE PRINT LAPORAN
+    Route::get('/pesanan/print', [PesananController::class, 'print'])->name('pesanan.print');
 
     /* PENGGUNA */
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
