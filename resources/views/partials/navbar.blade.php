@@ -15,7 +15,7 @@
                      alt="Logo" 
                      class="w-12 h-12 rounded-full object-cover shadow">
                 <span class="text-pink-700 font-bold text-lg">
-                    Bouquet de Fleur
+                    Bouquetde Fleur
                 </span>
             </a>
         </div>
@@ -49,6 +49,7 @@
                 </a>
             @endguest
 
+            
             @auth
                 {{-- PROFILE DROPDOWN --}}
                 <div x-data="{ open: false }" class="relative">
@@ -82,7 +83,6 @@
                         <span>👤</span>
                         <span>Profil</span>
                         </a>
-
 
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

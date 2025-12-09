@@ -52,6 +52,13 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+// ===============================
+// HALAMAN BUTUH BANTUAN (PUBLIC)
+// ===============================
+Route::get('/bantuan', function () {
+    return view('help');
+})->name('bantuan');
+
 
 /*
 |--------------------------------------------------------------------------
