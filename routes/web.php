@@ -11,7 +11,6 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -29,7 +28,6 @@ Route::get('/', function () {
         : redirect()->route('login');
 })->name('home');
 
-
 /*
 |--------------------------------------------------------------------------
 | AUTH (GUEST)
@@ -43,7 +41,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-    // LUPA PASSWORD
+    // RESET PASSWORD
     Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
@@ -56,10 +54,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [NewPasswordController::class, 'store'])
         ->name('password.update');
 
-        Route::get('/verify-email',         [VerifyEmailController::class, 'show'])->name('verify.show');
-Route::post('/verify-email',        [VerifyEmailController::class, 'verify'])->name('verify.post');
-Route::post('/verify-email/resend', [VerifyEmailController::class, 'resend'])->name('verify.resend');
-
+    // OTP / VERIFY EMAIL
+    Route::get('/verify-email',         [VerifyEmailController::class, 'show'])->name('verify.show');
+    Route::post('/verify-email',        [VerifyEmailController::class, 'verify'])->name('verify.post');
+    Route::post('/verify-email/resend', [VerifyEmailController::class, 'resend'])->name('verify.resend');
 });
 
 /*
@@ -71,12 +69,12 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// ===============================
-// HALAMAN BUTUH BANTUAN (PUBLIC)
-// ===============================
-Route::get('/bantuan', function () {
-    return view('help');
-})->name('bantuan');
+/*
+|--------------------------------------------------------------------------
+| PUBLIC PAGE
+|--------------------------------------------------------------------------
+*/
+Route::get('/bantuan', fn () => view('help'))->name('bantuan');
 
 /*
 |--------------------------------------------------------------------------
@@ -86,52 +84,58 @@ Route::get('/bantuan', function () {
 Route::middleware('auth')->group(function () {
 
     /* DASHBOARD */
-    Route::get('/user/dashboard', fn() => view('frontend.home'))
+    Route::get('/user/dashboard', fn () => view('frontend.home'))
         ->name('user.dashboard');
 
-    /* Menu Buket */
-    Route::get('/buket-bunga', [FrontendController::class, 'buketBunga'])->name('buket.bunga');
-    Route::get('/buket-snack', [FrontendController::class, 'buketSnack'])->name('buket.snack');
-    Route::get('/buket-uang',  [FrontendController::class, 'buketUang'])->name('buket.uang');
+    /* ===============================
+       PRODUK (FRONTEND)
+       =============================== */
 
-    /* ✅ DETAIL PRODUK (yang dipanggil dari home.blade.php) */
+    // KATEGORI
+    Route::get('/buket-bunga', [ProdukController::class, 'buketBunga'])
+        ->name('produk.buket');
+
+    Route::get('/buket-snack', [ProdukController::class, 'buketSnack'])
+        ->name('produk.snack');
+
+    Route::get('/buket-uang', [ProdukController::class, 'buketUang'])
+        ->name('produk.uang');
+
+    // DETAIL PRODUK (SATU-SATUNYA)
     Route::get('/produk/{id}', [ProdukController::class, 'detail'])
         ->whereNumber('id')
         ->name('produk.detail');
 
-    /* DETAIL PRODUK */
-    Route::get('/produk/detail', [FrontendController::class, 'detailProduk'])
-        ->name('produk.detail');
+    /* ===============================
+       CART & CHECKOUT
+       =============================== */
 
-    /* CART: ADD FROM DETAIL */
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+    // ADD FROM DETAIL
     Route::post('/cart/add-detail', [CartController::class, 'addFromDetail'])
         ->name('cart.add.detail');
 
-    /*
-    |--------------------------------------------------------------------------
-    | BUY NOW + CHECKOUT
-    |--------------------------------------------------------------------------
-    */
-
-    // BUY NOW → klik Pesan Sekarang
+    // BUY NOW
     Route::post('/checkout/buy-now', [CartController::class, 'buyNow'])
         ->name('checkout.buyNow');
 
-    // CHECKOUT NORMAL (keranjang)
+    // CHECKOUT
     Route::get('/checkout', function () {
-        $cart = session('cart', []);
-        $total = collect($cart)->sum(fn($i) => $i['qty'] * $i['price']);
+        $cart   = session('cart', []);
+        $total  = collect($cart)->sum(fn ($i) => $i['qty'] * $i['price']);
         $alamat = Address::where('user_id', auth()->id())->first();
 
         return view('cart.checkout', compact('cart', 'total', 'alamat'));
     })->name('cart.checkout');
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | PROFIL USER
-    |--------------------------------------------------------------------------
-    */
+    /* ===============================
+       PROFIL USER
+       =============================== */
 
     Route::get('/user/profile', [UserProfileController::class, 'index'])->name('profile.index');
     Route::post('/user/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
@@ -139,33 +143,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/password/change', [UserProfileController::class, 'changePassword'])->name('password.change');
     Route::post('/user/password/update', [UserProfileController::class, 'updatePassword'])->name('password.update');
 
-    /* ALAMAT */
-    Route::get('/user/alamat', [AddressController::class, 'index'])
-        ->name('profile.address.index');
-
-    Route::get('/user/alamat/tambah', [AddressController::class, 'create'])
-        ->name('profile.address.create');
-
-    Route::post('/user/alamat/tambah', [AddressController::class, 'store'])
-        ->name('profile.address.store');
-
-    /* PESANAN USER */
+    // PESANAN USER
     Route::get('/user/orders', [UserProfileController::class, 'orders'])
         ->name('orders.index');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CART ROUTES
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -174,7 +155,7 @@ Route::middleware('auth')->group(function () {
 */
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/', fn () => view('admin.dashboard'))->name('dashboard');
 
     /* PRODUK */
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');

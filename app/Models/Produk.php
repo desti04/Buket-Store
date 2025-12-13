@@ -11,19 +11,22 @@ class Produk extends Model
 
     protected $table = 'produk';
 
-    // PENTING: id_kategori HARUS ada disini
     protected $fillable = [
         'nama',
-        'id_kategori', 
+        'id_kategori',
         'harga',
         'stok',
         'foto',
-        'deskripsi'
+        'deskripsi',
     ];
 
-    // Relasi agar nama kategori muncul di tabel
+    // Relasi ke kategori
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
+        return $this->belongsTo(
+            Kategori::class,
+            'id_kategori',
+            'id_kategori'
+        );
     }
 }

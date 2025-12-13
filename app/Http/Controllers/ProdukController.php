@@ -8,6 +8,11 @@ use App\Models\Kategori;
 
 class ProdukController extends Controller
 {
+    /**
+     * ===============================
+     * ADMIN - LIST PRODUK
+     * ===============================
+     */
     public function index()
     {
         $produk = Produk::with('kategori')->get();
@@ -16,11 +21,16 @@ class ProdukController extends Controller
         return view('admin.produk.index', compact('produk', 'kategori'));
     }
 
+    /**
+     * ===============================
+     * ADMIN - SIMPAN PRODUK
+     * ===============================
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'nama'        => 'required',
-            'id_kategori' => 'required',
+            'nama'        => 'required|string',
+            'id_kategori' => 'required|numeric',
             'harga'       => 'required|numeric',
             'stok'        => 'required|numeric',
             'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -28,6 +38,7 @@ class ProdukController extends Controller
         ]);
 
         $nama_file = null;
+
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $nama_file = time() . "_" . $file->getClientOriginalName();
@@ -40,26 +51,59 @@ class ProdukController extends Controller
             'harga'       => $request->harga,
             'stok'        => $request->stok,
             'foto'        => $nama_file,
-            'deskripsi'   => $request->deskripsi
+            'deskripsi'   => $request->deskripsi,
         ]);
 
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
 
     /**
-     * DETAIL PRODUK (frontend)
-     * Saat ini kamu kirim data produk via query string dari home.blade.php,
-     * jadi kita ambil dari request query.
+     * ===============================
+     * FRONTEND - KATEGORI BUKET BUNGA
+     * id_kategori = 1
+     * ===============================
      */
-    public function detail($id, Request $request)
+    public function buketBunga()
     {
-        $produk = [
-            'id'    => $id,
-            'img'   => $request->query('img'),
-            'title' => $request->query('title'),
-            'price' => $request->query('price'),
-            'desc'  => $request->query('desc'),
-        ];
+        $products = Produk::where('id_kategori', 1)->get();
+
+        return view('frontend.buket-bunga', compact('products'));
+    }
+
+    /**
+     * ===============================
+     * FRONTEND - KATEGORI BUKET SNACK
+     * id_kategori = 2
+     * ===============================
+     */
+    public function buketSnack()
+    {
+        $products = Produk::where('id_kategori', 2)->get();
+
+        return view('frontend.buket-snack', compact('products'));
+    }
+
+    /**
+     * ===============================
+     * FRONTEND - KATEGORI BUKET UANG
+     * id_kategori = 3
+     * ===============================
+     */
+    public function buketUang()
+    {
+        $products = Produk::where('id_kategori', 3)->get();
+
+        return view('frontend.buket-uang', compact('products'));
+    }
+
+    /**
+     * ===============================
+     * FRONTEND - DETAIL PRODUK
+     * ===============================
+     */
+    public function detail($id)
+    {
+        $produk = Produk::with('kategori')->findOrFail($id);
 
         return view('frontend.produk_detail', compact('produk'));
     }
