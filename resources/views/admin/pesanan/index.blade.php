@@ -7,7 +7,7 @@
         <h4>Daftar Pesanan</h4>
 
         <!-- Tombol Print -->
-        <a href="{{ route('admin.pesanan.print') }}" 
+        <a href="{{ route('pesanan.store') }}" 
            target="_blank" 
            class="btn btn-secondary btn-sm">
             <i class="fa fa-print"></i> Print Laporan

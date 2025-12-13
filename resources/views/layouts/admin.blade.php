@@ -140,7 +140,7 @@
         </div>
 
         <div class="menu-box">
-            <a href="{{ route('admin.pengguna.index') }}">
+            <a href="{{ route('admin.dashboard') }}">
                 <i class="fa fa-users"></i> Pengguna
             </a>
         </div>
