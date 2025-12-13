@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('otp_code', 10)->nullable()->after('email_verified_at');
+            $table->string('otp_code', 64)->nullable()->after('email_verified_at');
             $table->timestamp('otp_expires_at')->nullable()->after('otp_code');
         });
     }
