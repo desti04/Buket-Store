@@ -106,6 +106,23 @@
             margin-left: 240px;
             padding: 28px;
         }
+
+        /* ==========================================
+           FIX: dropdown select / option teks putih
+           ========================================== */
+        select.form-control,
+        select.form-select,
+        .form-control,
+        .form-select {
+            color: #000 !important;
+            background-color: #fff !important;
+        }
+
+        select.form-control option,
+        select.form-select option {
+            color: #000 !important;
+            background-color: #fff !important;
+        }
     </style>
 </head>
 
@@ -158,7 +175,6 @@
         </div>
 
     </div>
-
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand navbar-light shadow-sm navbar-custom px-4">

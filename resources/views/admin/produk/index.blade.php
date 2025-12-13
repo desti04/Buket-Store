@@ -20,11 +20,12 @@
             <div class="col-md-3">
                 <label>Kategori</label>
                 <select name="id_kategori" class="form-control" required>
-                    <option value="">-- Pilih Kategori --</option>
-                    @foreach($kategori as $k)
-                        <option value="{{ $k->id_kategori }}">{{ $k->nama_kategori }}</option>
-                    @endforeach
-                </select>
+    <option value="">-- Pilih Kategori --</option>
+    @foreach($kategori as $k)
+    <option value="{{ $k->id }}">{{ $k->nama_kategori }}</option>
+@endforeach
+</select>
+
             </div>
 
             <div class="col-md-2">
@@ -81,7 +82,8 @@
                     @endif
                 </td>
 
-                <td>{{ $p->kategori->nama_kategori ?? '-' }}</td>
+                <td>{{ $p->kategori->nama ?? '-' }}</td>
+
                 <td>{{ $p->nama }}</td>
                 
                 <td>{{ $p->deskripsi ?? '-' }}</td>

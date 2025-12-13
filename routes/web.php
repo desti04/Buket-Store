@@ -20,6 +20,8 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Admin\DashboardController;
+
 
 use App\Models\Address;
 
@@ -162,7 +164,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
-    Route::get('/', fn () => view('admin.dashboard'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Produk
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
