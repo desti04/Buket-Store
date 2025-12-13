@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Produk;
 
 class FrontendController extends Controller
 {
@@ -11,38 +12,33 @@ class FrontendController extends Controller
         return view('frontend.home');
     }
 
+    // ===============================
+    // BUKET BUNGA
+    // ===============================
     public function buketBunga()
     {
-        $produkBunga = \App\Models\Produk::where('id_kategori', 1)->take(10)->get();
-        return view('frontend.buket-bunga', compact('produkBunga'));
+        $products = Produk::where('id_kategori', 1)->get();
+
+        return view('frontend.buket-bunga', compact('products'));
     }
 
+    // ===============================
+    // BUKET SNACK
+    // ===============================
     public function buketSnack()
     {
-        $produkSnack = \App\Models\Produk::where('id_kategori', 2)->take(10)->get();
-        return view('frontend.buket-snack', compact('produkSnack'));
+        $products = Produk::where('id_kategori', 2)->get();
+
+        return view('frontend.buket-snack', compact('products'));
     }
 
+    // ===============================
+    // BUKET UANG
+    // ===============================
     public function buketUang()
     {
-        $produkUang = \App\Models\Produk::where('id_kategori', 3)->take(10)->get();
-        return view('frontend.buket-uang', compact('produkUang'));
-    }
+        $products = Produk::where('id_kategori', 3)->get();
 
-    /*
-    |--------------------------------------------------------------------------
-    | DETAIL PRODUK
-    |--------------------------------------------------------------------------
-    | Mengirim data dari query string (img, title, price, desc)
-    |--------------------------------------------------------------------------
-    */
-    public function detailProduk(Request $request)
-    {
-        return view('user.product-detail', [
-            'img'   => $request->img,
-            'title' => $request->title,
-            'price' => $request->price,
-            'desc'  => $request->desc,
-        ]);
+        return view('frontend.buket-uang', compact('products'));
     }
 }

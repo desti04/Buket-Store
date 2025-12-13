@@ -24,27 +24,30 @@
                     <div class="flex items-center gap-4 border-b pb-4">
 
                         {{-- Gambar produk --}}
-                        <img src="{{ asset('images/' . ($item['image'] ?? 'no-image.png')) }}"
-                             class="w-20 h-20 object-cover rounded-lg shadow-sm" alt="">
+                        <img src="{{ asset('images/' . $item['image']) }}"
+                             class="w-20 h-20 object-cover rounded-lg shadow-sm"
+                             alt="{{ $item['name'] }}">
 
                         {{-- Detail produk --}}
                         <div class="flex-1">
                             <p class="font-semibold text-pink-700 text-lg">
-                                {{ $item['name'] ?? $item['title'] ?? 'Tanpa Nama' }}
+                                {{ $item['name'] }}
                             </p>
 
                             <p class="text-sm text-gray-600">
-                                Rp {{ number_format($item['price'] ?? 0, 0, ',', '.') }}
+                                Rp {{ number_format($item['price'], 0, ',', '.') }}
                             </p>
 
                             {{-- Form update qty --}}
-                            <form action="{{ route('cart.update', $item['id']) }}" 
+                            <form action="{{ route('cart.update', $item['id']) }}"
                                   method="POST"
                                   class="mt-2 flex items-center gap-2">
                                 @csrf
 
-                                <input type="number" name="qty" min="1"
-                                       value="{{ $item['qty'] ?? 1 }}"
+                                <input type="number"
+                                       name="qty"
+                                       min="1"
+                                       value="{{ $item['qty'] }}"
                                        class="w-16 border rounded px-2 py-1 text-center">
 
                                 <button type="submit"
@@ -84,11 +87,10 @@
                         </button>
                     </form>
 
-                   <a href="{{ route('cart.checkout') }}"
-                    class="px-5 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600">
-                    Checkout
+                    <a href="{{ route('cart.checkout') }}"
+                       class="px-5 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600">
+                        Checkout
                     </a>
-
                 </div>
             </div>
         @endif
