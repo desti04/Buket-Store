@@ -156,18 +156,45 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES
+| ADMIN ROUTES (FIXED + COMPLETE)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
+    // Dashboard
     Route::get('/', fn () => view('admin.dashboard'))->name('dashboard');
 
+    // Produk
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
 
+    // Kategori
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
     Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
 
+    // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+
+    Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+
+    // PRINT LAPORAN
+    Route::get('/pesanan/print', [PesananController::class, 'print'])->name('pesanan.print');
+
+    // PENGGUNA (CRUD)
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+    Route::get('/pengguna/create', [PenggunaController::class, 'create'])->name('pengguna.create');
+    Route::post('/pengguna/store', [PenggunaController::class, 'store'])->name('pengguna.store');
+
+    // SHOW (Detail)
+    Route::get('/pengguna/{id}', [PenggunaController::class, 'show'])->name('pengguna.show');
+
+    // EDIT
+    Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
+
+    // UPDATE
+    Route::post('/pengguna/{id}/update', [PenggunaController::class, 'update'])->name('pengguna.update');
+
+    // DESTROY (Hapus) — NAMA HARUS SAMA DENGAN YANG DI BLADE
+    Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+
 });
