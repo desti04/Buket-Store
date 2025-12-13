@@ -15,17 +15,17 @@
 
             <div class="relative w-full flex-shrink-0 fade-slide">
                 <img src="{{ asset('images/Banner 1.jpeg') }}"
-                     class="w-full h-[380px] md:h-[520px] object-cover">
+                     class="w-full h-[380px] md:h-[600px] object-cover">
             </div>
 
             <div class="relative w-full flex-shrink-0 fade-slide">
                 <img src="{{ asset('images/Banner 2.jpeg') }}"
-                     class="w-full h-[380px] md:h-[520px] object-cover">
+                     class="w-full h-[380px] md:h-[600px] object-cover">
             </div>
 
             <div class="relative w-full flex-shrink-0 fade-slide">
                 <img src="{{ asset('images/Banner 3.png') }}"
-                     class="w-full h-[380px] md:h-[520px] object-cover">
+                     class="w-full h-[380px] md:h-[600px] object-cover">
             </div>
 
         </div>
@@ -106,3 +106,78 @@
 </div>
 
 @endsection
+
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const slider = document.getElementById('hero-slider');
+  const slides = document.getElementById('hero-slides');
+  const items  = slides?.children ? Array.from(slides.children) : [];
+  const total  = items.length;
+
+  if (!slider || !slides || total === 0) return;
+
+  // pastikan setiap slide mengambil 100% lebar container
+  items.forEach(el => el.style.width = '100%');
+
+  const btnPrev = document.getElementById('hero-prev');
+  const btnNext = document.getElementById('hero-next');
+  const dots    = document.querySelectorAll('[data-hero-dot]');
+
+  let index = 0;
+  let timer = null;
+
+  function setDots() {
+    dots.forEach((d, i) => {
+      d.classList.toggle('bg-pink-500', i === index);
+      d.classList.toggle('bg-pink-300', i !== index);
+    });
+  }
+
+  function goTo(i) {
+    index = (i + total) % total;
+    slides.style.transform = `translateX(-${index * 100}%)`;
+    setDots();
+  }
+
+  function start() {
+    stop();
+    timer = setInterval(() => goTo(index + 1), 3500);
+  }
+
+  function stop() {
+    if (timer) clearInterval(timer);
+    timer = null;
+  }
+
+  // init transform animation
+  slides.style.display = 'flex';
+  slides.style.transition = 'transform 700ms ease-in-out';
+  slides.style.willChange = 'transform';
+
+  goTo(0);
+  start();
+
+  btnPrev?.addEventListener('click', () => { goTo(index - 1); start(); });
+  btnNext?.addEventListener('click', () => { goTo(index + 1); start(); });
+
+  dots.forEach(d => {
+    d.addEventListener('click', () => {
+      goTo(parseInt(d.dataset.heroDot, 10));
+      start();
+    });
+  });
+
+  // pause saat hover
+  slider.addEventListener('mouseenter', stop);
+  slider.addEventListener('mouseleave', start);
+
+  // stop saat tab tidak aktif
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop();
+    else start();
+  });
+});
+</script>
+@endpush
