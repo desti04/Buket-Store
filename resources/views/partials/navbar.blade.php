@@ -11,7 +11,7 @@
         {{-- LOGO KIRI --}}
         <div class="flex items-center space-x-2">
             <a href="{{ url('/') }}" class="flex items-center space-x-2">
-                <img src="{{ asset('images/logo-buket-new.png') }}" 
+                <img src="{{ asset('images/logo buket new.png') }}" 
                      alt="Logo" 
                      class="w-12 h-12 rounded-full object-cover shadow">
                 <span class="text-pink-700 font-bold text-lg">

@@ -133,7 +133,7 @@
 
         <!-- LOGO + TITLE -->
         <div class="d-flex align-items-center px-3 mb-4">
-            <img src="{{ asset('images/logo-buket-new.png') }}" alt="Logo" class="sidebar-logo">
+            <img src="{{ asset('images/logo buket new.png') }}" alt="Logo" class="sidebar-logo">
             <span class="store-title">Buket</span>
         </div>
 

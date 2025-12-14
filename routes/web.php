@@ -167,8 +167,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Produk
-    Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
-    Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
+    Route::resource('produk', ProdukController::class);
 
     // Kategori
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');

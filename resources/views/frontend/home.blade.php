@@ -74,7 +74,7 @@
             <div class="bg-gradient-to-b from-pink-100 to-white text-center shadow-lg
                         hover:shadow-2xl p-5 rounded-2xl max-w-sm hover:scale-[1.03] transition">
                 <div class="h-52 overflow-hidden rounded-xl">
-                    <img src="{{ asset('images/Buket Bunga.jpg') }}" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/kategori bunga.jpg') }}" class="w-full h-full object-cover">
                 </div>
                 <p class="mt-4 font-bold text-pink-700 text-xl">Buket Bunga</p>
             </div>

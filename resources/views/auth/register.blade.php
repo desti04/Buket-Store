@@ -16,7 +16,7 @@
             {{-- BAGIAN KIRI: Logo + Tagline --}}
             <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
                 {{-- LOGO (sama seperti di halaman login) --}}
-                <img src="{{ asset('images/logo-buket-new.png') }}"
+                <img src="{{ asset('images/logo buket new.png') }}"
                      alt="Logo Bouquet"
                      class="w-60 h-60 object-contain mb-8">
 

@@ -34,7 +34,7 @@ class ProdukController extends Controller
             'harga'       => 'required|numeric',
             'stok'        => 'required|numeric',
             'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'deskripsi'   => 'nullable|string'
+            'deskripsi'   => 'nullable|string',
         ]);
 
         $nama_file = null;
@@ -42,7 +42,7 @@ class ProdukController extends Controller
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $nama_file = time() . "_" . $file->getClientOriginalName();
-            $file->move(public_path('images'), $nama_file);
+            $file->move(public_path('images'), $nama_file); // folder konsisten
         }
 
         Produk::create([
@@ -59,52 +59,95 @@ class ProdukController extends Controller
 
     /**
      * ===============================
-     * FRONTEND - KATEGORI BUKET BUNGA
-     * id_kategori = 1
+     * ADMIN - TAMPILKAN FORM EDIT
+     * ===============================
+     */
+    public function edit($id)
+    {
+        $produk = Produk::findOrFail($id);
+        $kategori = Kategori::all();
+
+        return view('admin.produk.edit', compact('produk', 'kategori'));
+    }
+
+    /**
+     * ===============================
+     * ADMIN - UPDATE PRODUK
+     * ===============================
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama'        => 'required|string',
+            'id_kategori' => 'required|numeric',
+            'harga'       => 'required|numeric',
+            'stok'        => 'required|numeric',
+            'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'deskripsi'   => 'nullable|string',
+        ]);
+
+        $produk = Produk::findOrFail($id);
+
+        $nama_file = $produk->foto;
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            $file->move(public_path('images'), $nama_file);
+        }
+
+        $produk->update([
+            'nama'        => $request->nama,
+            'id_kategori' => $request->id_kategori,
+            'harga'       => $request->harga,
+            'stok'        => $request->stok,
+            'foto'        => $nama_file,
+            'deskripsi'   => $request->deskripsi,
+        ]);
+
+        return redirect()->route('admin.produk.index')->with('success', 'Produk berhasil diupdate!');
+    }
+
+    /**
+     * ===============================
+     * ADMIN - HAPUS PRODUK
+     * ===============================
+     */
+    public function destroy($id)
+    {
+        $produk = Produk::findOrFail($id);
+        $produk->delete();
+
+        return redirect()->back()->with('success', 'Produk berhasil dihapus!');
+    }
+
+
+    /*
+     * ===============================
+     * FRONTEND PRODUK
      * ===============================
      */
     public function buketBunga()
     {
         $products = Produk::where('id_kategori', 1)->get();
-
         return view('frontend.buket-bunga', compact('products'));
     }
 
-    /**
-     * ===============================
-     * FRONTEND - KATEGORI BUKET SNACK
-     * id_kategori = 2
-     * ===============================
-     */
     public function buketSnack()
     {
         $products = Produk::where('id_kategori', 2)->get();
-
         return view('frontend.buket-snack', compact('products'));
     }
 
-    /**
-     * ===============================
-     * FRONTEND - KATEGORI BUKET UANG
-     * id_kategori = 3
-     * ===============================
-     */
     public function buketUang()
     {
         $products = Produk::where('id_kategori', 3)->get();
-
         return view('frontend.buket-uang', compact('products'));
     }
 
-    /**
-     * ===============================
-     * FRONTEND - DETAIL PRODUK
-     * ===============================
-     */
     public function detail($id)
     {
         $produk = Produk::with('kategori')->findOrFail($id);
-
         return view('frontend.produk_detail', compact('produk'));
     }
 }
