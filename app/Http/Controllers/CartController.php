@@ -152,4 +152,33 @@ class CartController extends Controller
             'buy_now' => true,
         ]);
     }
+
+    /*
+    |--------------------------------------------------
+    | PESAN SEKARANG (langsung add to cart & checkout)
+    |--------------------------------------------------
+    */
+    public function pesanSekarang($id)
+    {
+        $produk = Produk::findOrFail($id);
+
+    // Ambil keranjang saat ini
+    $cart = session()->get('cart', []);
+
+    // Tambahkan produk dengan qty = 1
+    $cart[$id] = [
+        'id'    => $produk->id,
+        'name'  => $produk->nama,
+        'price' => $produk->harga,
+        'image' => $produk->foto,
+        'qty'   => 1,
+    ];
+
+    // Simpan ke session
+    session()->put('cart', $cart);
+
+    // Redirect ke checkout page
+    return redirect()->route('cart.checkout');
+}
+
 }

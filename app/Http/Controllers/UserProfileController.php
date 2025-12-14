@@ -79,6 +79,9 @@ public function updatePassword(Request $request)
      */
     public function orders()
     {
-        return view('user.orders');
+        // Ambil semua pesanan milik user yang sedang login
+        $pesanan = \App\Models\Pesanan::where('user_id', auth()->id())->get();
+
+        return view('user.orders', compact('pesanan'));
     }
 }

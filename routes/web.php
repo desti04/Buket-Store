@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
         ->whereNumber('id')
         ->name('produk.detail');
 
-      /*
+    /*
     | BANTUAN PELANGGAN
     */
     Route::middleware('auth')->group(function () {
@@ -111,6 +111,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/bantuan', [BantuanController::class, 'store'])->name('bantuan.store');
 });
 
+    // PESAN SEKARANG
+    Route::post('/produk/{id}/pesan-sekarang', [CartController::class, 'pesanSekarang'])
+        ->name('produk.pesanSekarang');
 
     /*
     | CART

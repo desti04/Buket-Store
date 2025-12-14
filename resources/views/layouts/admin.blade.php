@@ -18,14 +18,12 @@
         .sidebar {
             height: 100vh;
             background: #e8b8c8;
-            color: white;
             padding-top: 20px;
             position: fixed;
             width: 240px;
             box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
-
-            display: flex;             /* penting */
-            flex-direction: column;    /* penting */
+            display: flex;
+            flex-direction: column;
         }
 
         /* LOGO */
@@ -35,36 +33,39 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #fff;
-            box-shadow: 0 0 5px rgba(255,255,255,0.5);
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
         }
 
+        /* TEXT BUKET ADMIN */
         .store-title {
             font-weight: 700;
             font-size: 20px;
             margin-left: 12px;
-            color: #000 !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
 
         /* MENU BOX */
         .menu-box {
             margin: 10px 18px;
             padding: 12px 18px;
-            background: rgba(255,255,255,0.45);
+            background: rgba(255,255,255,0.15);
             border-radius: 15px;
             backdrop-filter: blur(6px);
             transition: 0.25s ease-in-out;
         }
 
+        /* HOVER EFFECT */
         .menu-box:hover {
-            background: rgba(255,255,255,0.75);
+            background: rgba(255,255,255,0.35);
             transform: translateX(6px);
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(255, 210, 225, 0.5);
         }
 
-        /* TEXT MENU (HITAM, TIDAK BOLD) */
+        /* MENU TEXT & ICON → PUTIH */
         .menu-box a,
         .menu-box button {
-            color: #000 !important;
+            color: #ffffff !important;
             font-size: 15px;
             font-weight: 500;
             text-decoration: none;
@@ -76,15 +77,21 @@
             width: 100%;
         }
 
-        /* ICON */
         .menu-box i {
-            color: #000 !important;
-            opacity: 0.85;
+            color: #ffffff !important;
+            opacity: 0.95;
         }
 
-        /* LOGOUT DI BAWAH */
+        /* HOVER → PINK TUA */
+        .menu-box:hover a,
+        .menu-box:hover button,
+        .menu-box:hover i {
+            color: #DB2777 !important;
+        }
+
+        /* LOGOUT AT BOTTOM */
         .logout-wrapper {
-            margin-top: auto;  /* TURUN KE PALING BAWAH */
+            margin-top: auto;
             width: 100%;
         }
 
@@ -107,9 +114,7 @@
             padding: 28px;
         }
 
-        /* ==========================================
-           FIX: dropdown select / option teks putih
-           ========================================== */
+        /* FIX SELECT TEXT */
         select.form-control,
         select.form-select,
         .form-control,
@@ -130,11 +135,9 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-
-        <!-- LOGO + TITLE -->
         <div class="d-flex align-items-center px-3 mb-4">
             <img src="{{ asset('images/logo buket new.png') }}" alt="Logo" class="sidebar-logo">
-            <span class="store-title">Buket</span>
+            <span class="store-title">Buket Admin</span>
         </div>
 
         <!-- MENU -->
@@ -162,7 +165,7 @@
             </a>
         </div>
 
-        <!-- LOGOUT PALING BAWAH -->
+        <!-- LOGOUT -->
         <div class="logout-wrapper">
             <div class="menu-box">
                 <form action="{{ route('logout') }}" method="POST">
@@ -173,7 +176,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 
     <!-- NAVBAR -->
