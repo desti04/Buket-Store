@@ -1,126 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Register | Bouquetde Fleur</title>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body class="bg-[#fdf7f9]">
 
-    <div class="min-h-screen flex items-center justify-center px-4">
-        <div class="w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-10">
+<body class="bg-gradient-to-b from-[#fdebf2] to-[#fff5f8]">
 
-            {{-- BAGIAN KIRI: Logo + Tagline --}}
-            <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-                {{-- LOGO (sama seperti di halaman login) --}}
+    <div class="min-h-screen flex items-center justify-center px-6">
+
+        <div class="w-full max-w-5xl flex flex-col md:flex-row items-center justify-center gap-14 fade-in">
+
+            {{-- LEFT SIDE (Logo + Text) --}}
+            <div class="flex-1 md:flex-[0.7] flex flex-col items-center md:items-start text-center md:text-left">
+
                 <img src="{{ asset('images/logo buket new.png') }}"
                      alt="Logo Bouquet"
-                     class="w-60 h-60 object-contain mb-8">
+                     class="w-64 h-64 object-contain mb-8 drop-shadow-md">
 
-                {{-- TEKS DI BAWAH LOGO --}}
-                <p class="text-[#b96b86] text-lg font-medium">
+                <p class="text-[#b96b86] text-xl font-semibold mb-1 tracking-wide">
                     Daftar dan temukan berbagai macam
                 </p>
-                <p class="text-[#b96b86] text-lg">
-                    model buket di sini!
+
+                <p class="text-[#c07a90] text-lg">
+                    model buket impianmu disini 💐
                 </p>
+
             </div>
 
-            {{-- BAGIAN KANAN: CARD REGISTER --}}
-            <div class="flex-1 flex justify-center">
-                <div class="w-full max-w-sm bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] px-8 py-9">
+            {{-- RIGHT SIDE (Register Card) --}}
+            <div class="flex-1 md:flex-[0.9] flex justify-center w-full">
 
-                    {{-- JUDUL --}}
-                    <h2 class="text-2xl font-semibold text-center mb-6 text-[#b96b86]">
+                <div class="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-3xl
+                            shadow-[0_8px_30px_rgba(0,0,0,0.08)] px-10 py-10 border border-white">
+
+                    <h2 class="text-3xl font-bold text-center mb-8 text-[#b96b86]">
                         Register
                     </h2>
 
-                    {{-- PESAN SUKSES (kalau ada flash dari backend) --}}
+                    {{-- Success Flash --}}
                     @if (session('status'))
-                        <div class="mb-4 p-3 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded">
+                        <div class="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-700 text-sm rounded">
                             {{ session('status') }}
                         </div>
                     @endif
 
-                    {{-- PESAN ERROR --}}
+                    {{-- Error Flash --}}
                     @if ($errors->any())
-                        <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded">
+                        <div class="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-sm rounded">
                             @foreach ($errors->all() as $error)
                                 <p>{{ $error }}</p>
                             @endforeach
                         </div>
                     @endif
 
-                    {{-- FORM REGISTER --}}
                     <form method="POST" action="{{ route('register.post') }}" id="register-form">
                         @csrf
 
-                        {{-- NAMA LENGKAP --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Nama Lengkap</label>
-                        <input type="text"
-                               name="name"
-                               value="{{ old('name') }}"
-                               required
-                               class="w-full px-4 py-2 mb-4 border border-[#e2d4da] rounded-md text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                               placeholder="Nama">
+                        {{-- NAME --}}
+                        <label class="text-sm font-medium text-gray-600">Nama Lengkap</label>
+                        <input type="text" name="name" required
+                            class="w-full px-4 py-3 mb-4 border border-[#e6d5db] rounded-xl text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-[#e7a5b8]"
+                            placeholder="Nama lengkap"
+                            value="{{ old('name') }}">
 
                         {{-- EMAIL --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-                        <input type="email"
-                               name="email"
-                               value="{{ old('email') }}"
-                               required
-                               class="w-full px-4 py-2 mb-4 border border-[#e2d4da] rounded-md text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                               placeholder="Email">
+                        <label class="text-sm font-medium text-gray-600">Email</label>
+                        <input type="email" name="email" required
+                            class="w-full px-4 py-3 mb-4 border border-[#e6d5db] rounded-xl text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-[#e7a5b8]"
+                            placeholder="Email"
+                            value="{{ old('email') }}">
 
                         {{-- PASSWORD --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Password</label>
-                        <input type="password"
-                               name="password"
-                               required
-                               class="w-full px-4 py-2 mb-1 border border-[#e2d4da] rounded-md text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                               placeholder="Password">
+                        <label class="text-sm font-medium text-gray-600">Password</label>
+                        <input type="password" name="password" required
+                            class="w-full px-4 py-3 mb-1 border border-[#e6d5db] rounded-xl text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-[#e7a5b8]"
+                            placeholder="Password">
+
                         <p class="text-xs text-gray-500 mb-3">Min. 6 karakter</p>
 
-                        {{-- KONFIRMASI PASSWORD --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Konfirmasi Password</label>
-                        <input type="password"
-                               name="password_confirmation"
-                               required
-                               class="w-full px-4 py-2 mb-6 border border-[#e2d4da] rounded-md text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                               placeholder="Konfirmasi Password">
+                        {{-- CONFIRM PASSWORD --}}
+                        <label class="text-sm font-medium text-gray-600">Konfirmasi Password</label>
+                        <input type="password" name="password_confirmation" required
+                            class="w-full px-4 py-3 mb-6 border border-[#e6d5db] rounded-xl text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-[#e7a5b8]"
+                            placeholder="Konfirmasi password">
 
-                        {{-- TOMBOL REGISTER --}}
+                        {{-- REGISTER BUTTON --}}
                         <button type="submit" id="btn-register"
-                                class="w-full py-2.5 rounded-md font-semibold text-sm text-white
-                                       bg-[#d48fa4] hover:bg-[#c67990] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
-                            <span class="inline-block" id="btn-text">Register</span>
-                            <span class="hidden" id="btn-loading">Memproses...</span>
+                            class="w-full py-3 rounded-xl text-white font-semibold tracking-wide
+                                   bg-[#d48fa4] hover:bg-[#c67a8d] transition-all shadow-md hover:shadow-lg
+                                   disabled:opacity-60 disabled:cursor-not-allowed">
+
+                            <span id="btn-text">Register</span>
+                            <span id="btn-loading" class="hidden">Memproses...</span>
                         </button>
 
-                        {{-- INFO OTP --}}
+                        {{-- OTP INFO --}}
                         <p class="text-xs text-gray-500 mt-3">
-                            Setelah klik <span class="font-semibold">Register</span>, kode OTP akan dikirim ke email kamu.
+                            Setelah klik <b>Register</b>, kode OTP akan dikirim ke email kamu.
                             Verifikasi email untuk mengaktifkan akun.
                         </p>
 
-                        {{-- LINK KE LOGIN (DI TENGAH BAWAH CARD) --}}
-                        <div class="mt-4 w-full flex justify-center">
-                            <p class="text-sm text-[#b96b86]">
-                                Sudah memiliki akun?
+                        {{-- LINK LOGIN --}}
+                        <div class="mt-5 text-center">
+                            <p class="text-sm text-gray-600">
+                                Sudah punya akun?
                                 <a href="{{ route('login') }}"
-                                   class="font-semibold text-[#a154ae] hover:text-[#8b3f97] ml-1">
+                                    class="text-[#b96b86] hover:text-[#a65f75] font-semibold ml-1">
                                     Login
                                 </a>
                             </p>
                         </div>
+
                     </form>
 
                 </div>
@@ -129,10 +148,10 @@
         </div>
     </div>
 
-    {{-- Cegah double submit + state loading --}}
+    {{-- Prevent double submit --}}
     <script>
         const form = document.getElementById('register-form');
-        const btn  = document.getElementById('btn-register');
+        const btn = document.getElementById('btn-register');
         const btnt = document.getElementById('btn-text');
         const btnl = document.getElementById('btn-loading');
 
@@ -142,5 +161,6 @@
             btnl.classList.remove('hidden');
         });
     </script>
+
 </body>
 </html>

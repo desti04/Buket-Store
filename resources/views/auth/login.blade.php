@@ -1,106 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login | Bouquetde Fleur</title>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body class="bg-[#fdf7f9]">
 
-    <div class="min-h-screen flex items-center justify-center px-4">
-        {{-- WRAPPER UTAMA --}}
-        <div class="w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-10">
+<body class="bg-gradient-to-b from-[#fdebf2] to-[#fff5f8]">
 
-            {{-- BAGIAN KIRI: LOGO + TEKS --}}
-            <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-                {{-- LOGO (pakai gambar kamu) --}}
+    <div class="min-h-screen flex items-center justify-center px-6">
+
+        <!-- WRAPPER UTAMA DITENGAH -->
+        <div class="w-full max-w-5xl flex flex-col md:flex-row items-center justify-center gap-14 fade-in">
+
+            <!-- BAGIAN KIRI (Logo + Text) -->
+            <div class="flex-1 md:flex-[0.7] flex flex-col items-center md:items-start 
+                        text-center md:text-left">
+
                 <img src="{{ asset('images/logo buket new.png') }}"
-                     alt="Logo Bouquet"
-                     class="w-60 h-60 object-contain mb-8">
+                    alt="Logo Bouquet"
+                    class="w-64 h-64 object-contain mb-8 drop-shadow-md">
 
-                {{-- TEKS DI BAWAH LOGO --}}
-                <p class="text-[#b96b86] text-lg font-medium mb-1">
+                <p class="text-[#b96b86] text-xl font-semibold mb-1 tracking-wide">
                     Berbagai macam model buket.
                 </p>
-                <p class="text-[#b96b86] text-lg">
-                    Ayo temukan disini!
+                <p class="text-[#c07a90] text-lg">
+                    Temukan buket favoritmu disini 💐
                 </p>
             </div>
 
-            {{-- BAGIAN KANAN: CARD LOGIN --}}
-            <div class="flex-1 flex justify-center">
-                <div class="w-full max-w-sm bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] px-8 py-9">
+            <!-- BAGIAN KANAN (Card Login) -->
+            <div class="flex-1 md:flex-[0.9] flex justify-center w-full">
 
-                    {{-- JUDUL LOGIN --}}
-                    <h2 class="text-2xl font-semibold text-center mb-6 text-[#b96b86]">
+                <div class="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-3xl
+                            shadow-[0_8px_30px_rgba(0,0,0,0.08)] px-10 py-10 border border-white">
+
+                    <h2 class="text-3xl font-bold text-center mb-8 text-[#b96b86]">
                         Login
                     </h2>
 
-                    {{-- PESAN SUKSES --}}
+                    <!-- SUCCESS MESSAGE -->
                     @if (session('success'))
-                        <div class="mb-4 p-3 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded">
+                        <div class="mb-4 p-3 bg-green-100 border-l-4 border-green-500 
+                                    text-green-700 text-sm rounded">
                             {{ session('success') }}
                         </div>
                     @endif
 
-                    {{-- PESAN ERROR --}}
+                    <!-- ERROR MESSAGE -->
                     @if ($errors->any())
-                        <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded">
+                        <div class="mb-4 p-3 bg-red-100 border-l-4 border-red-500 
+                                    text-red-700 text-sm rounded">
                             {{ $errors->first() }}
                         </div>
                     @endif
 
-                    {{-- FORM LOGIN --}}
                     <form method="POST" action="{{ route('login.post') }}">
                         @csrf
 
-                        {{-- EMAIL --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            class="w-full px-4 py-2 mb-4 border border-[#e2d4da] rounded-md text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                            placeholder="Email">
+                        <!-- EMAIL -->
+                        <label class="text-sm font-medium text-gray-600">Email</label>
+                        <input type="email" name="email"
+                            class="w-full px-4 py-3 mb-4 border border-[#e6d5db] rounded-xl text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-[#e7a5b8]"
+                            placeholder="Masukkan email">
 
-                        {{-- PASSWORD --}}
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            class="w-full px-4 py-2 mb-2 border border-[#e2d4da] rounded-md text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-[#d18aa0]"
-                            placeholder="Password">
+                        <!-- PASSWORD -->
+                        <label class="text-sm font-medium text-gray-600">Password</label>
+                        <input type="password" name="password"
+                            class="w-full px-4 py-3 mb-2 border border-[#e6d5db] rounded-xl text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-[#e7a5b8]"
+                            placeholder="Masukkan password">
 
-                        {{-- LUPA SANDI --}}
+                        <!-- FORGOT PASSWORD -->
                         <div class="flex justify-end mb-4">
                             <a href="{{ route('password.request') }}"
-                               class="text-xs text-[#a154ae] hover:text-[#8b3f97] font-semibold">
+                                class="text-xs text-[#b96b86] hover:text-[#a65f75] font-semibold">
                                 Lupa sandi?
                             </a>
                         </div>
 
-                        {{-- TOMBOL LOGIN --}}
-                        <button
-                            type="submit"
-                            class="w-full py-2.5 rounded-md font-semibold text-sm text-white
-                                   bg-[#d48fa4] hover:bg-[#c67990] transition-colors">
+                        <!-- LOGIN BUTTON -->
+                        <button type="submit"
+                            class="w-full py-3 rounded-xl text-white font-semibold tracking-wide
+                                   bg-[#d48fa4] hover:bg-[#c67a8d] transition-all shadow-md hover:shadow-lg">
                             Login
                         </button>
 
-                        {{-- TEKS REGISTER (RATA KANAN SEPERTI DI GAMBAR) --}}
-                        <div class="mt-3 w-full flex justify-center">
+                        <!-- REGISTER -->
+                        <div class="mt-5 text-center">
                             <p class="text-sm text-gray-600">
-                                Belum memiliki akun?
+                                Belum punya akun?
                                 <a href="{{ route('register') }}"
-                                   class="text-[#a154ae] hover:text-[#8b3f97] font-semibold ml-1">
-                                    Register
+                                    class="text-[#b96b86] hover:text-[#a65f75] font-semibold ml-1">
+                                    Registrasi
                                 </a>
                             </p>
                         </div>
+
                     </form>
 
                 </div>
