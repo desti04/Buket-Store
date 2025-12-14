@@ -21,6 +21,8 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\BantuanController;
+
 
 
 use App\Models\Address;
@@ -100,6 +102,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/produk/{id}', [ProdukController::class, 'detail'])
         ->whereNumber('id')
         ->name('produk.detail');
+
+      /*
+    | BANTUAN PELANGGAN
+    */
+    Route::middleware('auth')->group(function () {
+    Route::get('/bantuan', fn () => view('bantuan'))->name('bantuan');
+    Route::post('/bantuan', [BantuanController::class, 'store'])->name('bantuan.store');
+});
+
 
     /*
     | CART

@@ -85,17 +85,18 @@
 
 </footer>
 
-<!-- FLOATING WHATSAPP HELP BUTTON -->
-<a href="https://api.whatsapp.com/send?phone=6282195763564&text=Hallo%20admin,%20saya%20butuh%20bantuan%20seputar%20produk"
-   class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white w-14 h-14 
-          rounded-full shadow-xl flex items-center justify-center text-3xl 
-          animate-bounce z-50">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-         class="w-8 h-8" alt="WA">
-</a>
-
 <script src="{{ asset('js/app.js') }}"></script>
 
 @stack('scripts')
+{{-- FLOATING BUTTON BANTUAN (KANAN BAWAH) --}}
+<a href="{{ route('bantuan') }}"
+   class="fixed bottom-6 right-6 z-50
+          bg-pink-400 hover:bg-pink-500
+          text-white font-semibold
+          px-5 py-3 rounded-full
+          shadow-lg transition">
+    Bantuan
+</a>
+
 </body>
 </html>
