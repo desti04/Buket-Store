@@ -5,8 +5,8 @@
 @section('content')
 <div class="bg-gray-100 py-8">
 
-<form action="#" method="POST">
-@csrf
+<form action="{{ route('pesanan.store') }}" method="POST">
+    @csrf
 
 <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
 

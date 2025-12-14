@@ -57,13 +57,15 @@
                 </button>
             </form>
 
-            {{-- PESAN SEKARANG (BELUM DIFUNGSIONALKAN) --}}
-            <button
-                type="button"
-                class="bg-pink-400 text-white px-6 py-2 rounded-lg opacity-70 cursor-not-allowed"
-                title="Fitur segera tersedia">
-                Pesan Sekarang
-            </button>
+            {{-- PESAN SEKARANG --}}
+            <form action="{{ route('produk.pesanSekarang', $produk->id) }}" method="POST">
+                @csrf
+
+                <button type="submit"
+                    class="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600">
+                ⚡ Pesan Sekarang
+                </button>
+            </form>
 
         </div>
 

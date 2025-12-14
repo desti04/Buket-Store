@@ -9,9 +9,13 @@ class Pesanan extends Model
     protected $table = 'pesanans'; // nama tabel di database
 
     protected $fillable = [
-        'nama_customer',
-        'no_hp',
-        'total',
-        'status',
+        'user_id',
+        'nama_pemesan',
+        'alamat',
+        'produk',
+        'jumlah',
+        'total_harga',
+        'image',
+        'status'
     ];
 }
