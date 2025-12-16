@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +20,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'address',
+        'role',
+        'status',
+        // ⬇️ tambahan untuk OTP & verifikasi email
+        'email_verified_at',
+        'otp_code',
+        'otp_expires_at',
     ];
 
     /**
@@ -31,6 +38,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // ⬇️ jangan expose kode OTP mentah/hashed
+        'otp_code',
     ];
 
     /**
@@ -42,7 +51,16 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'otp_expires_at'    => 'datetime', // ⬅️ penting untuk perbandingan waktu
+            'password'          => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke pesanan (asumsi tabel pesanan punya user_id & total_harga).
+     */
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class);
     }
 }
