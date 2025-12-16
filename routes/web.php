@@ -5,11 +5,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
-/*
-|--------------------------------------------------------------------------
-| CONTROLLERS
-|--------------------------------------------------------------------------
-*/
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\Admin\KategoriController;
@@ -28,18 +23,29 @@ use App\Models\Address;
 
 /*
 |--------------------------------------------------------------------------
-| HOME
+| HOME / DASHBOARD (PUBLIC)
 |--------------------------------------------------------------------------
+| Guest boleh masuk. Navbar akan otomatis tampil Login/Register pakai @guest.
 */
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('user.dashboard')
-        : redirect()->route('login');
-})->name('home');
+Route::get('/', fn () => view('frontend.home'))->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| AUTH (GUEST)
+| PRODUK (PUBLIC)
+|--------------------------------------------------------------------------
+| Guest boleh lihat katalog & detail.
+*/
+Route::get('/buket-bunga', [ProdukController::class, 'buketBunga'])->name('produk.buket');
+Route::get('/buket-snack', [ProdukController::class, 'buketSnack'])->name('produk.snack');
+Route::get('/buket-uang',  [ProdukController::class, 'buketUang'])->name('produk.uang');
+
+Route::get('/produk/{id}', [ProdukController::class, 'detail'])
+    ->whereNumber('id')
+    ->name('produk.detail');
+
+/*
+|--------------------------------------------------------------------------
+| AUTH (GUEST ONLY)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
@@ -50,7 +56,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-    // RESET PASSWORD VIA EMAIL (UNTUK USER YANG BELUM LOGIN / VIA LINK)
+    // RESET PASSWORD VIA EMAIL (guest / via link)
     Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
@@ -71,7 +77,7 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| LOGOUT
+| LOGOUT (AUTH)
 |--------------------------------------------------------------------------
 */
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -86,29 +92,17 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->group(function () {
 
     /*
-    | DASHBOARD
+    | DASHBOARD USER (opsional)
+    | Kalau kamu tetap mau ada URL khusus /user/dashboard setelah login.
     */
     Route::get('/user/dashboard', fn () => view('frontend.home'))
         ->name('user.dashboard');
 
     /*
-    | PRODUK
-    */
-    Route::get('/buket-bunga', [ProdukController::class, 'buketBunga'])->name('produk.buket');
-    Route::get('/buket-snack', [ProdukController::class, 'buketSnack'])->name('produk.snack');
-    Route::get('/buket-uang',  [ProdukController::class, 'buketUang'])->name('produk.uang');
-
-    Route::get('/produk/{id}', [ProdukController::class, 'detail'])
-        ->whereNumber('id')
-        ->name('produk.detail');
-
-    /*
     | BANTUAN PELANGGAN
     */
-    Route::middleware('auth')->group(function () {
-        Route::get('/bantuan', fn () => view('bantuan'))->name('bantuan');
-        Route::post('/bantuan', [BantuanController::class, 'store'])->name('bantuan.store');
-    });
+    Route::get('/bantuan', fn () => view('bantuan'))->name('bantuan');
+    Route::post('/bantuan', [BantuanController::class, 'store'])->name('bantuan.store');
 
     /*
     | PESAN SEKARANG
@@ -163,19 +157,17 @@ Route::middleware('auth')->group(function () {
     | PROFIL
     */
     Route::get('/user/profile', [UserProfileController::class, 'index'])->name('profile.index');
-
     Route::get('/user/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
-
     Route::post('/user/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
 
-    // UBAH PASSWORD DARI USER YANG LOGIN (BUKAN RESET VIA EMAIL TOKEN)
+    // UBAH PASSWORD (user login)
     Route::get('/user/password/change', [UserProfileController::class, 'changePassword'])
         ->name('user.password.change');
 
     Route::post('/user/password/update', [UserProfileController::class, 'updatePassword'])
         ->name('user.password.update');
 
-    // KIRIM RESET LINK LANGSUNG KE EMAIL USER YANG SEDANG LOGIN (DARI HALAMAN PROFIL)
+    // KIRIM RESET LINK dari profil (user login)
     Route::post('/user/password/send-reset-link', function (Request $request) {
         $user = $request->user();
 
@@ -198,44 +190,29 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (FIXED + COMPLETE)
+| ADMIN ROUTES (AUTH)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Produk
     Route::resource('produk', ProdukController::class);
 
-    // Kategori
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
     Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
 
-    // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
-
     Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
 
-    // PRINT LAPORAN
     Route::get('/pesanan/print', [PesananController::class, 'print'])->name('pesanan.print');
 
-    // PENGGUNA (CRUD)
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/pengguna/create', [PenggunaController::class, 'create'])->name('pengguna.create');
     Route::post('/pengguna/store', [PenggunaController::class, 'store'])->name('pengguna.store');
 
-    // SHOW (Detail)
     Route::get('/pengguna/{id}', [PenggunaController::class, 'show'])->name('pengguna.show');
-
-    // EDIT
     Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
-
-    // UPDATE
     Route::post('/pengguna/{id}/update', [PenggunaController::class, 'update'])->name('pengguna.update');
-
-    // DESTROY (Hapus)
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
-
 });

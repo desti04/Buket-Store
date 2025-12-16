@@ -1,6 +1,9 @@
 @php
+    use Illuminate\Support\Facades\Auth;
+
     $cart = session('cart', []);
     $cartCount = collect($cart)->sum('qty');
+
     $user = Auth::user();
     $initial = $user ? strtoupper(mb_substr($user->name, 0, 1)) : '';
 @endphp
@@ -11,8 +14,8 @@
         {{-- LOGO KIRI --}}
         <div class="flex items-center space-x-2">
             <a href="{{ url('/') }}" class="flex items-center space-x-2">
-                <img src="{{ asset('images/logo buket new.png') }}" 
-                     alt="Logo" 
+                <img src="{{ asset('images/logo buket new.png') }}"
+                     alt="Logo"
                      class="w-12 h-12 rounded-full object-cover shadow">
                 <span class="text-pink-700 font-bold text-lg">
                     Bouquetde Fleur
@@ -28,35 +31,43 @@
             <li><a href="{{ url('/buket-uang') }}" class="hover:text-pink-900">Buket Uang</a></li>
         </ul>
 
-        {{-- USER + KERANJANG KANAN --}}
+        {{-- KANAN --}}
         <div class="flex items-center gap-6 ml-auto">
 
-            {{-- ICON KERANJANG --}}
-            <a href="{{ route('cart.index') }}" class="relative">
-                <span class="text-2xl">🛒</span>
-
-                @if($cartCount > 0)
-                    <span class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1.5">
-                        {{ $cartCount }}
-                    </span>
-                @endif
-            </a>
-
+            {{-- Kalau BELUM LOGIN: tampil Login + Register --}}
             @guest
                 <a href="{{ route('login') }}"
                    class="px-4 py-2 rounded-full bg-pink-500 text-white font-semibold hover:bg-pink-600">
                     Login
                 </a>
+
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}"
+                       class="px-4 py-2 rounded-full bg-white/60 text-pink-700 font-semibold hover:bg-white border border-pink-200">
+                        Register
+                    </a>
+                @endif
             @endguest
 
-            
+            {{-- Kalau SUDAH LOGIN: tampil Keranjang + Profil --}}
             @auth
+                {{-- ICON KERANJANG --}}
+                <a href="{{ route('cart.index') }}" class="relative">
+                    <span class="text-2xl">🛒</span>
+
+                    @if($cartCount > 0)
+                        <span class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1.5">
+                            {{ $cartCount }}
+                        </span>
+                    @endif
+                </a>
+
                 {{-- PROFILE DROPDOWN --}}
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open"
                             class="flex items-center gap-2 bg-white/60 hover:bg-white px-3 py-1.5 rounded-full shadow-sm border border-pink-200">
 
-                        {{-- AVATAR BULAT --}}
+                        {{-- AVATAR --}}
                         <div class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold text-sm">
                             {{ $initial }}
                         </div>
@@ -79,14 +90,15 @@
                          class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-xl py-2 border border-pink-100 z-50">
 
                         <a href="{{ route('profile.index') }}"
-                        class="flex items-center gap-2 px-4 py-2 text-sm hover:bg-pink-50 text-pink-700">
-                        <span>👤</span>
-                        <span>Profil</span>
+                           class="flex items-center gap-2 px-4 py-2 text-sm hover:bg-pink-50 text-pink-700">
+                            <span>👤</span>
+                            <span>Profil</span>
                         </a>
 
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-pink-50 text-red-500">
+                            <button type="submit"
+                                    class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-pink-50 text-red-500">
                                 <span>🚪</span>
                                 <span>Logout</span>
                             </button>
@@ -94,7 +106,7 @@
                     </div>
                 </div>
             @endauth
-        </div>
 
+        </div>
     </div>
 </nav>
