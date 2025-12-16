@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,8 +23,6 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\BantuanController;
-
-
 
 use App\Models\Address;
 
@@ -51,7 +50,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-    // RESET PASSWORD
+    // RESET PASSWORD VIA EMAIL (UNTUK USER YANG BELUM LOGIN / VIA LINK)
     Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
@@ -107,11 +106,13 @@ Route::middleware('auth')->group(function () {
     | BANTUAN PELANGGAN
     */
     Route::middleware('auth')->group(function () {
-    Route::get('/bantuan', fn () => view('bantuan'))->name('bantuan');
-    Route::post('/bantuan', [BantuanController::class, 'store'])->name('bantuan.store');
-});
+        Route::get('/bantuan', fn () => view('bantuan'))->name('bantuan');
+        Route::post('/bantuan', [BantuanController::class, 'store'])->name('bantuan.store');
+    });
 
-    // PESAN SEKARANG
+    /*
+    | PESAN SEKARANG
+    */
     Route::post('/produk/{id}/pesan-sekarang', [CartController::class, 'pesanSekarang'])
         ->name('produk.pesanSekarang');
 
@@ -162,11 +163,36 @@ Route::middleware('auth')->group(function () {
     | PROFIL
     */
     Route::get('/user/profile', [UserProfileController::class, 'index'])->name('profile.index');
+
+    Route::get('/user/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+
     Route::post('/user/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
 
-    Route::get('/user/password/change', [UserProfileController::class, 'changePassword'])->name('password.change');
-    Route::post('/user/password/update', [UserProfileController::class, 'updatePassword'])->name('password.update');
+    // UBAH PASSWORD DARI USER YANG LOGIN (BUKAN RESET VIA EMAIL TOKEN)
+    Route::get('/user/password/change', [UserProfileController::class, 'changePassword'])
+        ->name('user.password.change');
 
+    Route::post('/user/password/update', [UserProfileController::class, 'updatePassword'])
+        ->name('user.password.update');
+
+    // KIRIM RESET LINK LANGSUNG KE EMAIL USER YANG SEDANG LOGIN (DARI HALAMAN PROFIL)
+    Route::post('/user/password/send-reset-link', function (Request $request) {
+        $user = $request->user();
+
+        $status = Password::sendResetLink([
+            'email' => $user->email,
+        ]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('password_success', 'Link reset password sudah dikirim ke email kamu.');
+        }
+
+        return back()->withErrors(['email' => __($status)]);
+    })->name('password.sendFromProfile');
+
+    /*
+    | PESANAN SAYA (USER)
+    */
     Route::get('/user/orders', [UserProfileController::class, 'orders'])->name('orders.index');
 });
 
@@ -209,7 +235,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // UPDATE
     Route::post('/pengguna/{id}/update', [PenggunaController::class, 'update'])->name('pengguna.update');
 
-    // DESTROY (Hapus) — NAMA HARUS SAMA DENGAN YANG DI BLADE
+    // DESTROY (Hapus)
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 
 });
