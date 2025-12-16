@@ -216,15 +216,3 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/pengguna/{id}/update', [PenggunaController::class, 'update'])->name('pengguna.update');
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 });
-    Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
-    Route::post('/produk/tambah', [ProdukController::class, 'store'])->name('produk.tambah');
-
-    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
-    Route::post('/kategori/tambah', [KategoriController::class, 'store'])->name('kategori.tambah');
-
-    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
-
-    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
-
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-});
