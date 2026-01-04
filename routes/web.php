@@ -31,6 +31,20 @@ Route::get('/', fn () => view('frontend.home'))->name('home');
 
 /*
 |--------------------------------------------------------------------------
+| INFORMASI (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::view('/tentang-kami', 'pages.tentang-kami')
+    ->name('tentang.kami');
+
+Route::view('/syarat-ketentuan', 'pages.syarat-ketentuan')
+    ->name('syarat.ketentuan');
+
+Route::view('/kebijakan-privasi', 'pages.kebijakan-privasi')
+    ->name('kebijakan.privasi');
+/*
+
+|--------------------------------------------------------------------------
 | PRODUK (PUBLIC)
 |--------------------------------------------------------------------------
 | Guest boleh lihat katalog & detail.
