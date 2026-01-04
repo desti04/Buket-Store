@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
-/* === FOOTER LOGO MAYOBOX STYLE === */
+/* === FOOTER LOGO === */
 @keyframes floatSoft {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
@@ -31,12 +31,13 @@
 </style>
 </head>
 
-<body class="bg-white text-gray-800">
+<body class="bg-white">
 
     <!-- NAVBAR -->
-    <header class="shadow-sm bg-pink-100">
-        @includeIf('partials.navbar')
+    <header class="sticky top-0 z-50 shadow-sm bg-pink-100">
+    @includeIf('partials.navbar')
     </header>
+
 
     <!-- MAIN CONTENT -->
     <main class="min-h-screen">
@@ -64,9 +65,10 @@
         <div>
             <h3 class="font-semibold text-lg mb-4">Informasi</h3>
             <ul class="space-y-2 text-sm text-white/90">
-                <li><a href="#" class="hover:underline">FAQ (Pertanyaan Umum)</a></li>
-                <li><a href="#" class="hover:underline">Syarat & Ketentuan</a></li>
-                <li><a href="#" class="hover:underline">Kebijakan Privasi</a></li>
+                <li><a href="{{ route('tentang.kami') }}">Tentang Kami</a></li>
+                <li><a href="{{ route('syarat.ketentuan') }}">Syarat & Ketentuan</a></li>
+                <li><a href="{{ route('kebijakan.privasi') }}">Kebijakan Privasi</a></li>
+
             </ul>
         </div>
 
