@@ -2,49 +2,68 @@
 
 @section('content')
 
-<div class="w-full bg-pink-100 pb-10">
+<div class="w-full bg-pink-100 pb-10 pt-10">
 
     {{-- ================= HERO SLIDER ================= --}}
-    <div id="hero-slider" class="relative w-full overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4">
 
-        <div class="pointer-events-none absolute inset-0 z-20 opacity-50 mix-blend-screen">
-            <img src="{{ asset('images/sparkle.png') }}" class="w-full h-full object-cover">
-        </div>
+        <div id="hero-slider" class="relative overflow-hidden rounded-2xl shadow-lg bg-white">
 
-        <div id="hero-slides" class="flex transition-all duration-700 ease-in-out">
-
-            <div class="relative w-full flex-shrink-0 fade-slide">
-                <img src="{{ asset('images/Banner 1.jpeg') }}"
-                     class="w-full h-[380px] md:h-[600px] object-cover">
+            {{-- Overlay sparkle --}}
+            <div class="pointer-events-none absolute inset-0 z-20 opacity-40 mix-blend-screen">
+                <img src="{{ asset('images/sparkle.png') }}" class="w-full h-full object-cover">
             </div>
 
-            <div class="relative w-full flex-shrink-0 fade-slide">
-                <img src="{{ asset('images/Banner 2.jpeg') }}"
-                     class="w-full h-[380px] md:h-[600px] object-cover">
+            {{-- Slides --}}
+            <div id="hero-slides" class="flex transition-all duration-700 ease-in-out">
+
+                {{-- SLIDE 1 --}}
+                <div class="relative w-full flex-shrink-0">
+                    <img src="{{ asset('images/Banner 1.jpeg') }}"
+                         style="height:400px;"
+                         class="w-full object-cover md:h-[580px]">
+                </div>
+
+                {{-- SLIDE 2 --}}
+                <div class="relative w-full flex-shrink-0">
+                    <img src="{{ asset('images/Banner 2.jpeg') }}"
+                         style="height:400px;"
+                         class="w-full object-cover md:h-[580px]">
+                </div>
+
+                {{-- SLIDE 3 --}}
+                <div class="relative w-full flex-shrink-0">
+                    <img src="{{ asset('images/Banner 3.png') }}"
+                         style="height:400px;"
+                         class="w-full object-cover md:h-[580px]">
+                </div>
+
             </div>
 
-            <div class="relative w-full flex-shrink-0 fade-slide">
-                <img src="{{ asset('images/Banner 3.png') }}"
-                     class="w-full h-[380px] md:h-[600px] object-cover">
-            </div>
+            {{-- Button Prev --}}
+            <button id="hero-prev"
+                class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 text-pink-600 border
+                       shadow-md w-10 h-10 rounded-full hover:scale-110 transition">‹</button>
 
+            {{-- Button Next --}}
+            <button id="hero-next"
+                class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 text-pink-600 border
+                       shadow-md w-10 h-10 rounded-full hover:scale-110 transition">›</button>
         </div>
 
-        <button id="hero-prev"
-            class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 text-pink-600 border
-                   shadow-lg w-10 h-10 rounded-full hover:scale-110 transition">‹</button>
-
-        <button id="hero-next"
-            class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 text-pink-600 border
-                   shadow-lg w-10 h-10 rounded-full hover:scale-110 transition">›</button>
-
-        <div class="flex justify-center gap-3 mt-4">
-            <button class="w-4 h-4 rounded-full bg-pink-500" data-hero-dot="0"></button>
-            <button class="w-4 h-4 rounded-full bg-pink-300" data-hero-dot="1"></button>
-            <button class="w-4 h-4 rounded-full bg-pink-300" data-hero-dot="2"></button>
+        {{-- Dot --}}
+        <div class="flex justify-center gap-2 mt-4">
+            <button class="w-3 h-3 rounded-full bg-pink-500" data-hero-dot="0"></button>
+            <button class="w-3 h-3 rounded-full bg-pink-300" data-hero-dot="1"></button>
+            <button class="w-3 h-3 rounded-full bg-pink-300" data-hero-dot="2"></button>
         </div>
+
     </div>
 </div>
+
+
+
+
 
 {{-- ================= TAGLINE ================= --}}
 <div class="text-center mt-6 mb-14">
