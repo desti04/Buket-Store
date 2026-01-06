@@ -42,11 +42,11 @@ class ProdukController extends Controller
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
 
-            // ✅ Nama file aman (tanpa spasi/karakter aneh)
+            // ✅ Nama file aman
             $nama_file = time() . '.' . $file->getClientOriginalExtension();
 
-            // ✅ Simpan ke public/images
-            $file->move(public_path('images'), $nama_file);
+            // ✅ Simpan langsung ke public_html/images
+            $file->move($_SERVER['DOCUMENT_ROOT'] . '/images', $nama_file);
         }
 
         Produk::create([
@@ -97,8 +97,8 @@ class ProdukController extends Controller
         if ($request->hasFile('foto')) {
 
             // ✅ Hapus foto lama kalau ada
-            if ($produk->foto && file_exists(public_path('images/' . $produk->foto))) {
-                unlink(public_path('images/' . $produk->foto));
+            if ($produk->foto && file_exists($_SERVER['DOCUMENT_ROOT'] . '/images/' . $produk->foto)) {
+                unlink($_SERVER['DOCUMENT_ROOT'] . '/images/' . $produk->foto);
             }
 
             $file = $request->file('foto');
@@ -106,8 +106,8 @@ class ProdukController extends Controller
             // ✅ Nama file aman
             $nama_file = time() . '.' . $file->getClientOriginalExtension();
 
-            // ✅ Simpan ke public/images
-            $file->move(public_path('images'), $nama_file);
+            // ✅ Simpan langsung ke public_html/images
+            $file->move($_SERVER['DOCUMENT_ROOT'] . '/images', $nama_file);
         }
 
         $produk->update([
@@ -132,8 +132,8 @@ class ProdukController extends Controller
         $produk = Produk::findOrFail($id);
 
         // ✅ Hapus foto dari folder images
-        if ($produk->foto && file_exists(public_path('images/' . $produk->foto))) {
-            unlink(public_path('images/' . $produk->foto));
+        if ($produk->foto && file_exists($_SERVER['DOCUMENT_ROOT'] . '/images/' . $produk->foto)) {
+            unlink($_SERVER['DOCUMENT_ROOT'] . '/images/' . $produk->foto);
         }
 
         $produk->delete();
@@ -141,8 +141,7 @@ class ProdukController extends Controller
         return redirect()->back()->with('success', 'Produk berhasil dihapus!');
     }
 
-
-    /*
+    /**
      * ===============================
      * FRONTEND PRODUK
      * ===============================

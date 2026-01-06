@@ -19,8 +19,9 @@
                    hover:-translate-y-1 transition-all duration-300 p-3 group">
 
             <div class="relative overflow-hidden rounded-lg">
-                <img src="{{ asset('images/' . $p->foto) }}"
-                     class="w-full h-48 object-cover rounded-lg group-hover:scale-105 duration-300">
+                <img src="{{ $p->foto ? asset('images/' . $p->foto) : asset('images/default.jpg') }}"
+                     class="w-full h-48 object-cover rounded-lg group-hover:scale-105 duration-300"
+                     alt="{{ $p->nama }}">
             </div>
 
             <p class="text-[15px] mt-3 font-semibold">
