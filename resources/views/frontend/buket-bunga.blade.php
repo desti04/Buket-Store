@@ -20,8 +20,9 @@
 
             {{-- GAMBAR --}}
             <div class="relative overflow-hidden rounded-lg">
-                <img src="{{ asset('images/' . $p->foto) }}" 
-                     class="w-full h-48 object-cover rounded-lg transition-all duration-300 group-hover:scale-105">
+                <img src="{{ $p->foto ? asset('images/' . $p->foto) : asset('images/default.jpg') }}"
+                     class="w-full h-48 object-cover rounded-lg transition-all duration-300 group-hover:scale-105"
+                     alt="{{ $p->nama }}">
             </div>
 
             {{-- NAMA --}}

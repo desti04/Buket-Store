@@ -7,8 +7,9 @@
     {{-- GAMBAR PRODUK --}}
     <div>
         <img
-            src="{{ asset('images/' . $produk->foto) }}"
-            class="w-full h-[350px] object-cover rounded-xl shadow-lg">
+            src="{{ $produk->foto ? asset('images/' . $produk->foto) : asset('images/default.jpg') }}"
+            class="w-full h-[350px] object-cover rounded-xl shadow-lg"
+            alt="{{ $produk->nama }}">
     </div>
 
     {{-- DETAIL PRODUK --}}
@@ -63,7 +64,7 @@
 
                 <button type="submit"
                     class="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600">
-                ⚡ Pesan Sekarang
+                    ⚡ Pesan Sekarang
                 </button>
             </form>
 
