@@ -41,8 +41,12 @@ class ProdukController extends Controller
 
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
-            $nama_file = time() . "_" . $file->getClientOriginalName();
-            $file->move(public_path('images'), $nama_file); // folder konsisten
+
+            // ✅ Nama file aman (tanpa spasi/karakter aneh)
+            $nama_file = time() . '.' . $file->getClientOriginalExtension();
+
+            // ✅ Simpan ke public/images
+            $file->move(public_path('images'), $nama_file);
         }
 
         Produk::create([
@@ -91,8 +95,18 @@ class ProdukController extends Controller
         $nama_file = $produk->foto;
 
         if ($request->hasFile('foto')) {
+
+            // ✅ Hapus foto lama kalau ada
+            if ($produk->foto && file_exists(public_path('images/' . $produk->foto))) {
+                unlink(public_path('images/' . $produk->foto));
+            }
+
             $file = $request->file('foto');
-            $nama_file = time() . "_" . $file->getClientOriginalName();
+
+            // ✅ Nama file aman
+            $nama_file = time() . '.' . $file->getClientOriginalExtension();
+
+            // ✅ Simpan ke public/images
             $file->move(public_path('images'), $nama_file);
         }
 
@@ -116,6 +130,12 @@ class ProdukController extends Controller
     public function destroy($id)
     {
         $produk = Produk::findOrFail($id);
+
+        // ✅ Hapus foto dari folder images
+        if ($produk->foto && file_exists(public_path('images/' . $produk->foto))) {
+            unlink(public_path('images/' . $produk->foto));
+        }
+
         $produk->delete();
 
         return redirect()->back()->with('success', 'Produk berhasil dihapus!');

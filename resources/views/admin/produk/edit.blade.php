@@ -5,9 +5,13 @@
 
     <h3>Edit Produk</h3>
 
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
     @if($errors->any())
         <div class="alert alert-danger">
-            <ul>
+            <ul class="mb-0">
                 @foreach ($errors->all() as $err)
                     <li>{{ $err }}</li>
                 @endforeach
@@ -46,27 +50,35 @@
                 <div class="col-md-2 mb-3">
                     <label>Harga</label>
                     <input type="number" name="harga"
-                           class="form-control" value="{{ $produk->harga }}" required>
+                           class="form-control"
+                           value="{{ $produk->harga }}" required>
                 </div>
 
                 <div class="col-md-2 mb-3">
                     <label>Stok</label>
                     <input type="number" name="stok"
-                           class="form-control" value="{{ $produk->stok }}" required>
+                           class="form-control"
+                           value="{{ $produk->stok }}" required>
                 </div>
 
             </div>
 
+            {{-- FOTO --}}
             <div class="mb-3">
                 <label>Foto Baru (opsional)</label>
-                <input type="file" name="foto" class="form-control">
+                <input type="file" name="foto" class="form-control" accept="image/*">
 
                 @if($produk->foto)
-                    <p class="mt-2">Foto lama:</p>
-                    <img src="{{ asset('images/'.$produk->foto) }}" width="120">
+                    <p class="mt-3 mb-1">Foto lama:</p>
+                    <img 
+                        src="{{ url('images/'.rawurlencode($produk->foto)) }}" 
+                        width="140"
+                        style="border-radius: 8px; border:1px solid #ddd;"
+                        alt="foto lama">
                 @endif
             </div>
 
+            {{-- DESKRIPSI --}}
             <div class="mb-3">
                 <label>Deskripsi</label>
                 <textarea name="deskripsi" class="form-control" rows="3">{{ $produk->deskripsi }}</textarea>

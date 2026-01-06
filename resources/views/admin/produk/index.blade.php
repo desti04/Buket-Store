@@ -8,11 +8,13 @@
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
+{{-- FORM TAMBAH PRODUK --}}
 <div class="card p-3 mb-4">
     <form action="{{ route('admin.produk.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
+
         <div class="row">
-            
+
             <div class="col-md-3">
                 <label>Nama Produk</label>
                 <input type="text" name="nama" class="form-control" required>
@@ -56,8 +58,11 @@
     </form>
 </div>
 
+
+{{-- LIST PRODUK --}}
 <div class="card p-3">
     <h5>List Produk</h5>
+
     <table class="table table-bordered mt-3 align-middle">
         <thead>
             <tr>
@@ -68,7 +73,7 @@
                 <th>Deskripsi</th>
                 <th>Harga</th>
                 <th>Stok</th>
-                <th>Aksi</th>   {{-- TAMBAHAN --}}
+                <th>Aksi</th>
             </tr>
         </thead>
 
@@ -77,9 +82,14 @@
             <tr>
                 <td>{{ $p->id }}</td>
 
-                <td>
+                {{-- FOTO --}}
+                <td style="width: 110px;">
                     @if($p->foto)
-                        <img src="{{ asset('images/'.$p->foto) }}" width="80" style="border-radius: 5px;">
+                        <img 
+                            src="{{ url('images/'.rawurlencode($p->foto)) }}" 
+                            width="80" 
+                            style="border-radius: 5px; border:1px solid #ddd;"
+                            alt="foto produk">
                     @else
                         <span class="badge bg-secondary">No Foto</span>
                     @endif
@@ -89,23 +99,28 @@
 
                 <td>{{ $p->nama }}</td>
 
-                <td>{{ $p->deskripsi ?? '-' }}</td>
+                <td style="max-width: 360px;">
+                    {{ $p->deskripsi ?? '-' }}
+                </td>
 
                 <td>Rp {{ number_format($p->harga, 0, ',', '.') }}</td>
 
                 <td>{{ $p->stok }}</td>
 
-                {{-- TOMBOL AKSI --}}
-                <td>
-                    <a href="{{ route('admin.produk.edit', $p->id) }}" 
-                       class="btn btn-warning btn-sm mb-1">Edit</a>
+                {{-- AKSI --}}
+                <td style="width: 120px;">
+                    <a href="{{ route('admin.produk.edit', $p->id) }}"
+                       class="btn btn-warning btn-sm mb-1 w-100">
+                        Edit
+                    </a>
 
-                    <form action="{{ route('admin.produk.destroy', $p->id) }}" 
-                          method="POST" style="display:inline-block">
+                    <form action="{{ route('admin.produk.destroy', $p->id) }}"
+                          method="POST">
                         @csrf
                         @method('DELETE')
+
                         <button onclick="return confirm('Yakin ingin menghapus produk ini?')"
-                                class="btn btn-danger btn-sm">
+                                class="btn btn-danger btn-sm w-100">
                             Hapus
                         </button>
                     </form>
